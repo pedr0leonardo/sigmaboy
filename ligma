@@ -1,5 +1,6 @@
 loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/9fc6ea0998205cd9d3d2ff03edb8c51d64dd723e390cd1c89f6feff616362a5e/download"))()
 
+
 local gameid = game.PlaceId
 local player = game.Players.LocalPlayer
 local UserId = player.UserId
@@ -62,6 +63,7 @@ local tab = Strongest:Button({
     Callback = function()
         if game.PlaceId == 10449761463 then
             Window:Destroy()
+            getgenv().SCRIPT_KEY = "KEYLESS"
             loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/4fa21d0d9631f029c2a54126f7820dac12c723eb062c00ad2e9277df0ba053be/download"))()
         else
             WindUI:Popup({
@@ -82,6 +84,7 @@ local tab = Strongest:Button({
                         Variant = "Primary",
                         Callback = function()
                             Window:Destroy()
+                            getgenv().SCRIPT_KEY = "KEYLESS"
                             loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/4fa21d0d9631f029c2a54126f7820dac12c723eb062c00ad2e9277df0ba053be/download"))()
                         end,
                     }
@@ -117,7 +120,7 @@ local tab = Tapsim:Button({
                         Variant = "Primary",
                         Callback = function()
                             Window:Destroy()
-                            print("asdjasjdajsdjwasdasdwasd")
+                            print("Neck Yourself")
                         end,
                     }
                 }
