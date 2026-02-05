@@ -60,7 +60,6 @@ local tab = Strongest:Button({
     Callback = function()
         if game.PlaceId == 10449761463 then
             Window:Destroy()
-            getgenv().SCRIPT_KEY = "KEYLESS"
             loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/4fa21d0d9631f029c2a54126f7820dac12c723eb062c00ad2e9277df0ba053be/download"))()
         else
             WindUI:Popup({
@@ -81,7 +80,6 @@ local tab = Strongest:Button({
                         Variant = "Primary",
                         Callback = function()
                             Window:Destroy()
-                            getgenv().SCRIPT_KEY = "KEYLESS"
                             loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/4fa21d0d9631f029c2a54126f7820dac12c723eb062c00ad2e9277df0ba053be/download"))()
                         end,
                     }
@@ -97,7 +95,6 @@ local tab = Tapsim:Button({
     Callback = function()
         if game.PlaceId == 75992362647444 then
             Window:Destroy()
-            getgenv().SCRIPT_KEY = "KEYLESS"
             loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/ac8d53f6cf7e9a809c6d45388082ac4aa07d71f47a9a110200783ca0fac631d7/download"))()
         else
             WindUI:Popup({
@@ -118,7 +115,6 @@ local tab = Tapsim:Button({
                         Variant = "Primary",
                         Callback = function()
                             Window:Destroy()
-                            getgenv().SCRIPT_KEY = "KEYLESS"
                             loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/ac8d53f6cf7e9a809c6d45388082ac4aa07d71f47a9a110200783ca0fac631d7/download"))()
                         end,
                     }
