@@ -1,4 +1,3 @@
-local discord = JD_DISCORD_ID
 local gameid = game.PlaceId
 local player = game.Players.LocalPlayer
 local UserId = player.UserId
