@@ -97,7 +97,7 @@ local tab = Tapsim:Button({
     Callback = function()
         if game.PlaceId == 75992362647444 then
             Window:Destroy()
-            loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/9fc6ea0998205cd9d3d2ff03edb8c51d64dd723e390cd1c89f6feff616362a5e/download"))()
+            loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/ac8d53f6cf7e9a809c6d45388082ac4aa07d71f47a9a110200783ca0fac631d7/download"))()
         else
             WindUI:Popup({
                 Title = "Game Warning",
