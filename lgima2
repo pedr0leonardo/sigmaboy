@@ -1,0 +1,2878 @@
+--------------------------------------------------
+-- STATING TABLES
+--------------------------------------------------
+
+local rainbowSlots = {
+    [1] = nil, -- { id = petId, startTime = tick() }
+    [2] = nil,
+    [3] = nil
+}
+
+local eggamounts = {
+    ["1"] = 1,
+    ["2"] = 2,
+    ["3"] = 3,
+    ["8"] = 8,
+}
+
+local codes = {
+    "russo",
+    "lucky",
+    "tacos",
+    "enchant",
+    "TELEPORT",
+    "LUCKYTOTEM",
+    "SPEEDYTOTEM"
+}
+
+local rebirthamounttable = {
+    ["1"] = 1,
+    ["5"] = 2,
+    ["15"] = 3,
+    ["35"] = 4,
+    ["70"] = 5,
+    ["100"] = 6,
+    ["500"] = 7,
+    ["1.5k"] = 8,
+    ["3.5k"] = 9,
+    ["7k"] = 10,
+    ["10k"] = 11,
+    ["50k"] = 12,
+    ["150k"] = 13,
+    ["350k"] = 14,
+    ["700k"] = 15,
+    ["1m"] = 16,
+    ["5m"] = 17,
+    ["15m"] = 18,
+    ["35m"] = 19,
+    ["70m"] = 20,
+    ["100m"] = 21,
+    ["500m"] = 22,
+    ["1.5b"] = 23,
+    ["3.5b"] = 24,
+    ["7b"] = 25,
+    ["10b"] = 26,
+    ["50b"] = 27,
+    ["150b"] = 28,
+    ["350b"] = 29,
+    ["700b"] = 30,
+    ["1t"] = 31,
+    ["5t"] = 32,
+    ["15t"] = 33,
+    ["35t"] = 34,
+    ["70t"] = 35,
+    ["100t"] = 36,
+    ["500t"] = 37,
+    ["1.5qd"] = 38,
+    ["3.5qd"] = 39,
+    ["7qd"] = 40,
+    ["10qd"] = 41,
+    ["50qd"] = 42,
+    ["150qd"] = 43,
+    ["350qd"] = 44,
+    ["700qd"] = 45,
+}
+
+local rebirthLabels = {
+    "1","5","15","35","70","100","500",
+    "1.5k","3.5k","7k","10k","50k","150k","350k","700k",
+    "1m","5m","15m","35m","70m","100m","500m",
+    "1.5b","3.5b","7b","10b","50b","150b","350b","700b",
+    "1t","5t","15t","35t","70t","100t","500t",
+    "1.5qd","3.5qd","7qd","10qd","50qd","150qd","350qd","700qd"
+}
+
+local World1 = {
+	["Golden Machine"] = Vector3.new(-189, 215, 200), -- done
+	["Electric Machine"] = Vector3.new(-95, 215, 205), -- done
+	["Electric Wheel"] = Vector3.new(-99, 213, 224), -- done
+	["Rank Rewards"] = Vector3.new(-104, 214, 122), -- done
+	portals = Vector3.new(-153, 214, 347), -- done
+	["World 1"] = Vector3.new(-152, 214, 239), -- done
+	Forest = Vector3.new(-245, 1222, 261), -- done
+	Winter = Vector3.new(-252, 2542, 395), -- done
+	Desert = Vector3.new(-88, 3501, 414), -- done
+	Jungle = Vector3.new(-304, 4420, 354), -- done
+	Heaven = Vector3.new(-290, 5833, 268), -- done
+	Dojo = Vector3.new(-129, 7662, 338), -- done
+	Volcano = Vector3.new(-243, 9189, 187), -- done
+	Candy = Vector3.new(-151, 10942, 151), -- done
+	Atlantis = Vector3.new(-248, 12937, 268), -- done
+	Space = Vector3.new(-282, 15326, 480) -- done
+}
+
+local WorldOrder = {
+	"Forest",
+	"Winter",
+	"Desert",
+	"Jungle",
+	"Heaven",
+	"Dojo",
+	"Volcano",
+	"Candy",
+	"Atlantis",
+	"Space"
+}
+
+local WorldOrder2 = {
+    "Kryo",
+    "Magma",
+    "Celestial",
+    "Holographic",
+    "Lunar"
+}
+
+local World2 = {
+	["Rainbow Machine"] = Vector3.new(1207, 665, -13382), -- done
+	["Enchant Machine"] = Vector3.new(1305, 664, -13457), -- done
+	["Golden Machine"] = Vector3.new(1417, 658, -13457), -- done
+	["Rank Rewards"] = Vector3.new(1213, 651, -13187), -- done
+	Portals = Vector3.new(1417, 651, -13256), -- done
+	["World 2"] = Vector3.new(1318, 648, -13260), -- done
+	Kryo = Vector3.new(1403, 1738, -13215), -- done
+	Magma = Vector3.new(1437, 3116, -13033), -- done
+    Celestial = Vector3.new(1295, 4160, -12955),
+    Holographic = Vector3.new(1205, 5351, -12928),
+    Lunar = Vector3.new(1462, 6867, -13040)
+}
+
+local enchants = {
+    "None",
+    "Taps I",
+    "Gems I",
+    "Rebirths I",
+    "Luck I",
+    "Taps II",
+    "Gems II",
+    "Rebirths II",
+    "Luck II",
+    "Luck III",
+    "Golden Hunter",
+    "Rainbow Hunter",
+    "Secret Hunter"
+}
+
+local eggs = {
+    "None",
+    "Space",
+    "Starry",
+    "Temple",
+    "Tropical",
+    "Lightning Event",
+    "Volcanic",
+    "Acorn",
+    "Angelic",
+    "Atlantis",
+    "Basic",
+    "Cactus",
+    "Candy",
+    "Cryo",
+    "Elemental",
+    "Frozen",
+    "Holy",
+    "Infernal",
+    "Magma",
+    "Moonflower",
+    "Poison",
+    "Safari",
+    "Sakura",
+    "Samurai",
+    "Snowman",
+    "Divine",
+    "Holographic",
+    "Lunar"
+}
+
+
+
+
+--------------------------------------------------
+-- STATING OTHER LOCALS
+--------------------------------------------------
+
+local VirtualUser = game:GetService("VirtualUser")
+local idleConnection = nil
+local autoupgrading1 = false
+local autoupgrading2 = false
+local autoupgrading3 = false
+local autoupgrading4 = false
+local autoupgrading5 = false
+local autoupgrading6 = false
+local hiddenname = false
+local rainbowTextCache = {}
+local RAINBOW_CACHE_TIME = 3 -- seconds
+local autoRainbowTextCraft = false
+local autoRainbowTextCraftThread = nil
+local rainbowTextCraftAmount = 3 -- 1–3
+local autoClaimRainbow = false
+local claimRainbowThread = nil
+local autoRainbowCraft = false
+local rainbowCraftThread = nil
+local rainbowCraftAmount = 5
+local autoCraftThread = nil
+local autoelectricspin = false
+local autoclickspeed = 0
+local cframe = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+local autohatchtoggle = false
+local autorebirthtoggle = false
+local rebirthamount = 1
+local TurnedOn = false
+local eggname = ""
+local players = game:GetService("Players")
+local Players = players
+local player = players.LocalPlayer
+local Workspace = game:GetService("Workspace")
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+local islandFolder = workspace.Game:WaitForChild("IslandParts")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local world = 1
+local Teleportcoords = "None"
+local teleportPosition = nil -- Vector3
+local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+local loopSpeedValue = 24      -- Default walk speed value
+local loopJumpPowerValue = 50      -- Default JumpPower value
+local loopJumpConnection = nil     -- To hold the loop connection
+local RunService = game:GetService("RunService")
+local walkflinging = false
+local flingConnection = nil
+local Method = "None"
+local TextChatService = game:GetService("TextChatService")
+local UnBypassedString = ""
+local UserId = player.UserId
+local targetname = nil
+local target = nil
+local Camera = workspace.CurrentCamera
+local spectating = false
+local viewingPlayer = nil
+local spectateTarget = nil
+local camConn = nil
+local diedConn = nil
+local originalSubject = Camera.CameraSubject
+local eggamount = 3
+local autoclaimrank = false
+local autoCraftPets = false
+local craftAmount = 6
+local Network = require(game:GetService("ReplicatedStorage").Modules.Network)
+local RAINBOW_CRAFT_TIME = 33
+local originalCFrame = hrp.CFrame
+local Replication = require(ReplicatedStorage.Game.Replication)
+local EnchantData = require(ReplicatedStorage.Game.EnchantData)
+local selectedEnchant = "None"
+local autoEnchantRunning = false
+local pets = {}           -- [displayName] = petId
+local selectedPetId = nil
+local petOptions = {"None"}
+local autoMerchant = false
+local merchantThread
+local initialized = false
+local originalCFrame
+local enchantLocked = false
+local targetEnchants = {}
+local petstring = tostring(getPetEnchantfuctionresult)
+local executor = identifyexecutor() or "Unknown"
+
+-- MERCHANT POSITIONS
+local MERCHANT_1_POS = Vector3.new(-397, 9204, 190)        -- Gem Merchant
+local MERCHANT_2_POS = Vector3.new(1348, 6867, -12972)    -- Space Merchant
+
+-- SERVER MERCHANT NAMES
+local GEM_MERCHANT_ARG = "GemMerchant"
+local SPACE_MERCHANT_ARG = "SpaceMerchant"
+
+
+--------------------------------------------------
+-- PET IDS
+--------------------------------------------------
+
+local id1 = nil
+local id2 = nil
+local id3 = nil
+local id4 = nil
+local id5 = nil
+local id6 = nil
+
+local inventoryPath = player.PlayerGui
+	:WaitForChild("Tabs")
+	:WaitForChild("Inventory")
+	:WaitForChild("Menu")
+	:WaitForChild("Categories")
+	:WaitForChild("Pets")
+	:WaitForChild("Inner")
+	:WaitForChild("List")
+	:WaitForChild("Container")
+
+local equippedPath = player.PlayerGui
+	:WaitForChild("Tabs")
+	:WaitForChild("Inventory")
+	:WaitForChild("Menu")
+	:WaitForChild("Categories")
+	:WaitForChild("Pets")
+	:WaitForChild("Inner")
+	:WaitForChild("List")
+	:WaitForChild("Equipped")
+	:WaitForChild("List")
+
+--------------------------------------------------
+-- FUCNTIONS 
+--------------------------------------------------
+
+local function getPetEnchant(selectedPetId)
+    local pet = Replication.Data.Pets[selectedPetId]
+    if pet then
+        return pet.Enchant -- string or nil
+    end
+    return nil
+end
+
+local function updateEnchantSection()
+    if not selectedPetId then
+        EnchantSection:SetTitle("Current Pet Enchant: None")
+        return
+    end
+
+    local pet = Replication.Data.Pets[selectedPetId]
+    local enchant = pet and pet.Enchant or "None"
+
+    EnchantSection:SetTitle("Current Pet Enchant: " .. enchant)
+end
+
+getPetEnchantfuctionresult = getPetEnchant(selectedPetId)
+
+local function updateTargetEnchants(selectedList)
+	table.clear(targetEnchants)
+
+	for _, enchantName in ipairs(selectedList) do
+		targetEnchants[enchantName] = true
+	end
+end
+
+local function stopAutoEnchant()
+	autoEnchantRunning = false
+	enchantLocked = false
+
+	task.defer(function()
+		if autoenchanttoggle then
+			autoenchanttoggle:Set(false)
+		end
+	end)
+end
+
+ -- GETTING THE PETS --
+
+table.clear(pets)
+table.clear(petOptions)
+table.insert(petOptions, "None")
+
+local function collectPets(container)
+	for _, frame in ipairs(container:GetChildren()) do
+		if frame:IsA("Frame") and frame.Name ~= "Pet" then
+			local id = frame:GetAttribute("Id")
+			if id then
+				local baseName = frame:GetAttribute("Name") or frame.Name
+				local uniqueLabel = string.format(
+					"%s [%s]",
+					baseName,
+					string.sub(id, 1, 6) -- longer = safer
+				)
+
+				-- DO NOT overwrite
+				if not pets[uniqueLabel] then
+					pets[uniqueLabel] = id
+					table.insert(petOptions, uniqueLabel)
+				end
+			end
+		end
+	end
+end
+
+table.clear(pets)
+table.clear(petOptions)
+table.insert(petOptions, "None")
+
+collectPets(inventoryPath)
+collectPets(equippedPath)
+
+task.defer(function()
+	if PetEnchantDropdown then
+		PetEnchantDropdown:Refresh(petOptions)
+	end
+end)
+
+local function rebuildPetDropdown()
+	table.clear(pets)
+	table.clear(petOptions)
+	table.insert(petOptions, "None")
+
+	collectPets(inventoryPath)
+	collectPets(equippedPath)
+
+	-- refresh dropdown safely
+	task.defer(function()
+		if PetEnchantDropdown then
+			PetEnchantDropdown:Refresh(petOptions)
+		end
+	end)
+end
+
+local refreshQueued = false
+
+local function queuePetRefresh()
+	if refreshQueued then return end
+	refreshQueued = true
+
+	task.delay(0.2, function()
+		refreshQueued = false
+		rebuildPetDropdown()
+	end)
+end
+
+local function watchPetContainer(container)
+	-- when pets are added
+	container.ChildAdded:Connect(function(child)
+		if child:IsA("Frame") then
+			queuePetRefresh()
+		end
+	end)
+
+	-- when pets are removed
+	container.ChildRemoved:Connect(function(child)
+		if child:IsA("Frame") then
+			queuePetRefresh()
+		end
+	end)
+
+	-- existing pets: watch attribute changes
+	for _, child in ipairs(container:GetChildren()) do
+		if child:IsA("Frame") then
+			child:GetAttributeChangedSignal("Id"):Connect(queuePetRefresh)
+		end
+	end
+end
+
+watchPetContainer(inventoryPath)
+watchPetContainer(equippedPath)
+
+-- initial population
+rebuildPetDropdown()
+
+local enchantOptions = {"None"}
+
+for enchantName in pairs(EnchantData.Contents) do
+	table.insert(enchantOptions, enchantName)
+end
+
+table.sort(enchantOptions)
+
+-- AUTO ENCHANT -- 
+
+local function startAutoEnchant()
+	if autoEnchantRunning then return end
+	autoEnchantRunning = true
+
+	task.spawn(function()
+		while autoEnchantRunning do
+			if not selectedPetId then
+				WindUI:Notify({
+					Title = "Spectral Hub",
+					Content = "Please select a pet to enchant!",
+					Duration = 5,
+					Icon = "circle-alert",
+				})
+				stopAutoEnchant()
+				return
+			end
+
+			if next(targetEnchants) == nil then
+                WindUI:Notify({
+                    Title = "Spectral Hub",
+                    Content = "Please select at least one enchant!",
+                    Duration = 5,
+                    Icon = "circle-alert",
+                })
+                stopAutoEnchant()
+                return
+            end
+
+			-- Roll once
+			if not enchantLocked then
+				enchantLocked = true
+
+				-- ✅ IMPORTANT: capture the return value
+				local result = Network:InvokeServer("EnchantPet", selectedPetId)
+                EnchantSection:SetTitle("Current Pet Enchant: " .. result)
+				-- (optional) mirror game behavior: set local data to match
+				if result and Replication.Data and Replication.Data.Pets and Replication.Data.Pets[selectedPetId] then
+					Replication.Data.Pets[selectedPetId].Enchant = result
+				end
+
+				-- ✅ This is now reliable for "did we get it?"
+				if result and targetEnchants[result] then
+					WindUI:Notify({
+						Title = "Spectral Hub",
+						Content = "Target enchant obtained!",
+						Duration = 5,
+						Icon = "circle-alert",
+					})
+					stopAutoEnchant()
+					return
+				end
+
+				enchantLocked = false
+			end
+
+			task.wait(0.15)
+		end
+	end)
+end
+
+
+
+-- TELEPORT (physical)
+local function initializeMerchants()
+	if initialized then return end
+	initialized = true
+
+	-- save original location
+	local char = player.Character or player.CharacterAdded:Wait()
+	local root = char:WaitForChild("HumanoidRootPart")
+	originalCFrame = root.CFrame
+
+	local tabs = player.PlayerGui:WaitForChild("Tabs")
+
+	-- original merchant tab
+	local merchantGui = tabs:WaitForChild("Merchant")
+
+	-- ===== GEM MERCHANT =====
+	Network:InvokeServer("TeleportWorld", "Main")
+	Network:InvokeServer("TeleportZone", "Volcano")
+	task.wait(2)
+
+	-- re-acquire HRP (character may respawn)
+	char = player.Character or player.CharacterAdded:Wait()
+	root = char:WaitForChild("HumanoidRootPart")
+	root.CFrame = CFrame.new(MERCHANT_1_POS)
+	task.wait(1.5)
+
+	-- clone Merchant -> GemMerchant
+	if not tabs:FindFirstChild("GemMerchant") then
+		local gemClone = merchantGui:Clone()
+		gemClone.Name = "GemMerchant"
+		gemClone.Parent = tabs
+	end
+
+	-- rename original to Space Merchant
+	if merchantGui.Name ~= "Space Merchant" then
+		merchantGui.Name = "Space Merchant"
+	end
+
+	-- ===== SPACE MERCHANT =====
+	Network:InvokeServer("TeleportWorld", "Space")
+	Network:InvokeServer("TeleportZone", "Lunar")
+	task.wait(2)
+
+	char = player.Character or player.CharacterAdded:Wait()
+	root = char:WaitForChild("HumanoidRootPart")
+	root.CFrame = CFrame.new(MERCHANT_2_POS)
+	task.wait(1.5)
+
+	-- ===== RETURN PLAYER =====
+	char = player.Character or player.CharacterAdded:Wait()
+	root = char:WaitForChild("HumanoidRootPart")
+	root.CFrame = originalCFrame
+	task.wait(1)
+end
+
+-- BUY FUNCTION
+local function buyFromMerchant(guiName, merchantArg, keyword)
+	local list = player.PlayerGui
+		:WaitForChild("Tabs")
+		:WaitForChild(guiName)
+		:WaitForChild("Menu")
+		:WaitForChild("Inner")
+		:WaitForChild("List")
+
+	for _, frame in ipairs(list:GetChildren()) do
+		if frame:IsA("Frame") then
+			if string.find(string.lower(frame.Name), string.lower(keyword)) then
+				Network:InvokeServer(
+					"PurchaseMerchantItem",
+					merchantArg,
+					frame.Name
+				)
+				task.wait(0.1)
+			end
+		end
+	end
+end
+
+-- LOOP
+local function startAutoMerchant()
+	if merchantThread then return end
+
+	merchantThread = task.spawn(function()
+		while autoMerchant do
+			-- Space Merchant -> Space items
+			buyFromMerchant("Space Merchant", SPACE_MERCHANT_ARG, "Space")
+
+			-- GemMerchant -> Potion items
+			buyFromMerchant("GemMerchant", GEM_MERCHANT_ARG, "Potion")
+
+			task.wait(2)
+		end
+
+		merchantThread = nil
+	end)
+end
+
+local function tpislands()
+    for _, worldName in ipairs(WorldOrder) do
+        local island = islandFolder:FindFirstChild(worldName)
+
+        if island then
+            local cf
+
+            -- If it's a Part
+            if island:IsA("BasePart") then
+                cf = island.CFrame
+
+            -- If it's a Model
+            elseif island:IsA("Model") then
+                local part = island.PrimaryPart or island:FindFirstChildWhichIsA("BasePart")
+                if part then
+                    cf = part.CFrame
+                end
+            end
+
+            if cf then
+
+                local startTime = tick()
+                while tick() - startTime < 2 do
+                    -- Force position every frame (float)
+                    hrp.CFrame = cf
+                    hrp.AssemblyLinearVelocity = Vector3.zero
+                    hrp.AssemblyAngularVelocity = Vector3.zero
+
+                    RunService.Heartbeat:Wait()
+                end
+            else
+            end
+        else
+        end
+    end
+end
+
+
+
+local function tryUpgradeDoubleJump()
+    local ok1, res1 = pcall(function()
+        return Network:InvokeServer("UpgradeDoubleJump", "Main")
+    end)
+
+    local ok2, res2 = pcall(function()
+        return Network:InvokeServer("UpgradeDoubleJump", "Space")
+    end)
+
+    if not ok2 then
+        return false
+    end
+
+    return true
+end
+
+local autoDoubleJump = false
+local autoDoubleJumpThread = nil
+
+local function autoDoubleJumpLoop()
+    if autoDoubleJumpThread then return end
+
+    autoDoubleJumpThread = task.spawn(function()
+        while autoDoubleJump do
+            if not tryUpgradeDoubleJump() then
+                break
+            end
+
+            task.wait(0.1) -- cooldown
+        end
+
+        autoDoubleJumpThread = nil
+    end)
+end
+
+
+local function tryBuyRebirth()
+    local ok, result = pcall(function()
+        return Network:InvokeServer("UpgradeGemShop", "RebirthButtons", nil)
+    end)
+
+    if not ok then
+        return false
+    end
+
+    return true -- keep going
+end
+
+local buyingrebirth = false
+local autobuyThread = nil
+
+local function autoBuyRebirthLoop()
+    if autobuyThread then return end
+
+    autobuyThread = task.spawn(function()
+        while buyingrebirth do
+            local keepGoing = tryBuyRebirth()
+
+            if not keepGoing then
+                buyingrebirth = false
+                break
+            end
+
+            task.wait(0.5) -- IMPORTANT: don't spam
+        end
+
+        autobuyThread = nil
+    end)
+end
+
+local function getPetContainer()
+    return game:GetService("Players").LocalPlayer.PlayerGui
+        :WaitForChild("Tabs")
+        :WaitForChild("Inventory")
+        :WaitForChild("Menu")
+        :WaitForChild("Categories")
+        :WaitForChild("Pets")
+        :WaitForChild("Inner")
+        :WaitForChild("List")
+        :WaitForChild("Container")
+end
+
+local function hasBottomRightIcon(petFrame, iconName)
+    local main = petFrame:FindFirstChild("Main")
+    local br = main and main:FindFirstChild("BottomRight")
+    local icon = br and br:FindFirstChild(iconName)
+    return (icon and icon.Visible == true) or false
+end
+
+-- Usage:
+local function isVoidPet(petFrame)
+    return hasBottomRightIcon(petFrame, "Void")
+end
+
+local function isElectricPet(petFrame)
+    return hasBottomRightIcon(petFrame, "Electric")
+end
+
+local function hasActiveRainbowSlots()
+    for i = 1, 3 do
+        if rainbowSlots[i] ~= nil then
+            return true
+        end
+    end
+    return false
+end
+
+local function hasRainbowText_ByTextColor(petFrame)
+    local petId = petFrame:GetAttribute("Id")
+    if not petId then return false end
+
+    local cached = rainbowTextCache[petId]
+    if cached and tick() - cached.time < RAINBOW_CACHE_TIME then
+        return cached.result
+    end
+
+    local main = petFrame:FindFirstChild("Main")
+    if not main then return false end
+
+    local multi = main:FindFirstChild("Multi")
+    if not multi or not multi:IsA("TextLabel") then return false end
+
+    local c1 = multi.TextColor3
+    task.wait(0.08)
+    local c2 = multi.TextColor3
+
+    local result =
+        math.abs(c1.R - c2.R) > 0.01 or
+        math.abs(c1.G - c2.G) > 0.01 or
+        math.abs(c1.B - c2.B) > 0.01
+
+    rainbowTextCache[petId] = {
+        result = result,
+        time = tick()
+    }
+
+    return result
+end
+
+local function hasGoldMultiplierGradient(petFrame)
+    local main = petFrame:FindFirstChild("Main")
+    if not main then return false end
+
+    local multi = main:FindFirstChild("Multi")
+    if not multi then return false end
+
+    local gradient = multi:FindFirstChild("UIGradient")
+    if not gradient or not gradient:IsA("UIGradient") then
+        return false
+    end
+
+    local keys = gradient.Color.Keypoints
+    if #keys < 2 then return false end
+
+    local function close(a, b)
+        return math.abs(a - b) < 0.01
+    end
+
+    local c1 = keys[1].Value
+    local c2 = keys[#keys].Value
+
+    -- ✅ EXACT gold multiplier gradient
+    return
+        close(c1.R, 1) and close(c1.G, 0.886275) and close(c1.B, 0.0392157) and
+        close(c2.R, 1) and close(c2.G, 0.701961) and close(c2.B, 0.00392157)
+end
+
+local function setRainbowTextCraftPetIds(requiredAmount)
+    id1, id2, id3 = nil, nil, nil
+    requiredAmount = math.clamp(requiredAmount, 1, 3)
+
+    local container = getPetContainer()
+    local grouped = {}
+
+    for _, petFrame in ipairs(container:GetChildren()) do
+        if not petFrame:IsA("Frame") then continue end
+
+        if isVoidPet(petFrame) or isElectricPet(petFrame) then
+            continue
+        end
+
+        -- ❌ must have rainbow text
+        if not hasRainbowText_ByTextColor(petFrame) then
+            continue
+        end
+
+        -- ❌ skip locked pets
+        local lock = petFrame:FindFirstChild("Lock")
+        if lock and lock:GetAttribute("Visible") == true then
+            continue
+        end
+
+        local petId = petFrame:GetAttribute("Id")
+        if not petId then continue end
+
+        grouped[petFrame.Name] = grouped[petFrame.Name] or {}
+        table.insert(grouped[petFrame.Name], petId)
+    end
+
+    for _, ids in pairs(grouped) do
+        if #ids >= requiredAmount then
+            id1 = ids[1]
+            if requiredAmount >= 2 then id2 = ids[2] end
+            if requiredAmount >= 3 then id3 = ids[3] end
+            return true
+        end
+    end
+
+    return false
+end
+
+local function autoRainbowTextCraftLoop()
+    if autoRainbowTextCraftThread then return end
+
+    autoRainbowTextCraftThread = task.spawn(function()
+        while autoRainbowTextCraft do
+            local required = rainbowTextCraftAmount
+
+            -- ❌ Not enough valid rainbow-text pets
+            if not setRainbowTextCraftPetIds(required) then
+                WindUI:Notify({
+                Title = "Spectral Hub",
+                Content = "You Have Run Out Of Rainbow Pets!",
+                Duration = 3, -- 3 seconds
+                Icon = "circle-alert",
+                })
+                task.wait(0.1)
+                ElectricCraft:Set(false)
+                continue
+            end
+
+            -- ✅ Craft using same-name rainbow-text pets
+            if required == 3 then
+                Network:InvokeServer("CraftPets", unpack{{ id1, id2, id3 }})
+            elseif required == 2 then
+                Network:InvokeServer("CraftPets", unpack{{ id1, id2 }})
+            elseif required == 1 then
+                Network:InvokeServer("CraftPets", unpack{{ id1 }})
+            end
+
+            -- ⏳ Give server + inventory time to update
+            task.wait(0.1)
+        end
+
+        autoRainbowTextCraftThread = nil
+    end)
+end
+
+local function getFreeRainbowSlot()
+    for i = 1, 3 do
+        if rainbowSlots[i] == nil then
+            return i
+        end
+    end
+end
+
+local function setRainbowCraftPetIds(requiredAmount)
+    requiredAmount = math.clamp(requiredAmount, 1, 5)
+
+    id1, id2, id3, id4, id5 = nil, nil, nil, nil, nil
+
+    local container = getPetContainer()
+    local grouped = {}
+
+    for _, petFrame in ipairs(container:GetChildren()) do
+        if not petFrame:IsA("Frame") then continue end
+
+        -- ✅ MUST have gold multiplier text
+        if not hasGoldMultiplierGradient(petFrame) then
+            continue
+        end
+
+        -- ❌ Skip locked pets
+        local lock = petFrame:FindFirstChild("Lock")
+        if lock and lock:GetAttribute("Visible") == true then
+            continue
+        end
+
+        local petId = petFrame:GetAttribute("Id")
+        if not petId then continue end
+
+        grouped[petFrame.Name] = grouped[petFrame.Name] or {}
+        table.insert(grouped[petFrame.Name], petId)
+    end
+
+    for _, ids in pairs(grouped) do
+        if #ids >= requiredAmount then
+            id1 = ids[1]
+            if requiredAmount >= 2 then id2 = ids[2] end
+            if requiredAmount >= 3 then id3 = ids[3] end
+            if requiredAmount >= 4 then id4 = ids[4] end
+            if requiredAmount >= 5 then id5 = ids[5] end
+
+            return true
+        end
+    end
+
+    return false
+end
+
+local function canStartRainbow()
+    return setRainbowCraftPetIds(rainbowCraftAmount)
+end
+
+
+local function isRainbowSystemDone()
+    if hasActiveRainbowSlots() then
+        return false
+    end
+
+    if canStartRainbow() then
+        return false
+    end
+
+    return true
+end
+
+
+local function autoClaimRainbowLoop()
+    if claimRainbowThread then return end
+
+    claimRainbowThread = task.spawn(function()
+        while autoClaimRainbow or hasActiveRainbowSlots() do
+            local didClaim = false
+            local now = tick()
+
+            for slot = 1, 3 do
+                local slotData = rainbowSlots[slot]
+                if slotData then
+                    local elapsed = now - slotData.startTime
+
+                    -- ⏳ Not ready yet
+                    if elapsed < RAINBOW_CRAFT_TIME then
+                        -- Optional debug
+                        continue
+                    end
+
+                    local ok, result = pcall(function()
+                        return Network:InvokeServer("ClaimRainbow", slotData.id)
+                    end)
+
+                    if not ok then
+                    end
+
+                    rainbowSlots[slot] = nil
+                    didClaim = true
+
+                    task.wait(1.2)
+                end
+            end
+
+            -- 🛑 Stop ONLY when drained AND toggle off
+            if isRainbowSystemDone() then
+
+                task.defer(function()
+                    if Rainbowcraft then
+                        Rainbowcraft:Set(false)
+                    end
+                end)
+
+                break
+            end
+            -- Poll faster when waiting for timers
+            task.wait(didClaim and 2 or 3)
+        end
+
+        claimRainbowThread = nil
+    end)
+end
+
+-- uses id1–id6
+-- skips UIGradient
+local function setGoldCraftPetIds(requiredAmount)
+    id1, id2, id3, id4, id5, id6 = nil, nil, nil, nil, nil, nil
+
+    local container = getPetContainer()
+    local grouped = {}
+
+    for _, petFrame in ipairs(container:GetChildren()) do
+        if not petFrame:IsA("Frame") then continue end
+        if petFrame:FindFirstChild("UIGradient") then continue end
+
+        local lock = petFrame:FindFirstChild("Lock")
+        if lock and lock:GetAttribute("Visible") then continue end
+
+        local petId = petFrame:GetAttribute("Id")
+        if not petId then continue end
+
+        grouped[petFrame.Name] = grouped[petFrame.Name] or {}
+        table.insert(grouped[petFrame.Name], petId)
+    end
+
+    for _, ids in pairs(grouped) do
+        if #ids >= requiredAmount then
+            if requiredAmount >= 1 then id1 = ids[1] end
+            if requiredAmount >= 2 then id2 = ids[2] end
+            if requiredAmount >= 3 then id3 = ids[3] end
+            if requiredAmount >= 4 then id4 = ids[4] end
+            if requiredAmount >= 5 then id5 = ids[5] end
+            if requiredAmount >= 6 then id6 = ids[6] end
+            return true
+        end
+    end
+
+    return false
+end
+
+local function autoGoldCraftLoop()
+    if autoCraftThread then return end
+
+    autoCraftThread = task.spawn(function()
+        while autoCraftPets do
+            local required = craftAmount
+
+            -- 🔁 If not enough pets → just WAIT, don't turn off
+            if not setGoldCraftPetIds(required) then
+                -- Optional: notify once (spam safe)
+
+                task.wait(3) -- wait before retrying
+                continue
+            end
+
+            -- ✅ Craft
+            if required == 6 then
+                Network:InvokeServer("CraftPets", unpack{{id1,id2,id3,id4,id5,id6}})
+            elseif required == 5 then
+                Network:InvokeServer("CraftPets", unpack{{id1,id2,id3,id4,id5}})
+            elseif required == 4 then
+                Network:InvokeServer("CraftPets", unpack{{id1,id2,id3,id4}})
+            elseif required == 3 then
+                Network:InvokeServer("CraftPets", unpack{{id1,id2,id3}})
+            elseif required == 2 then
+                Network:InvokeServer("CraftPets", unpack{{id1,id2}})
+            elseif required == 1 then
+                Network:InvokeServer("CraftPets", unpack{{id1}})
+            end
+
+            -- ⏳ Give server time to update inventory
+            task.wait(0.1)
+        end
+
+        autoCraftThread = nil
+    end)
+end
+
+
+local function autoRainbowCraftLoop()
+    if rainbowCraftThread then return end
+
+    rainbowCraftThread = task.spawn(function()
+        while autoRainbowCraft do
+            local required = rainbowCraftAmount
+
+            -- ✅ Find free slot FIRST
+            local slot = getFreeRainbowSlot()
+            if not slot then
+                task.wait(1)
+                continue
+            end
+
+            -- ✅ Select valid gold pets
+            if not setRainbowCraftPetIds(required) then
+                WindUI:Notify({
+                    Title = "Spectral Hub",
+                    Content = "You Have Run Out Of Gold Pets!",
+                    Duration = 5,
+                    Icon = "circle-alert",
+                })
+                autoRainbowCraft = false
+                break
+            end
+
+            -- ✅ Start rainbow craft
+            if required == 5 then
+                Network:InvokeServer("StartRainbow", unpack{{id1,id2,id3,id4,id5}})
+            elseif required == 4 then
+                Network:InvokeServer("StartRainbow", unpack{{id1,id2,id3,id4}})
+            elseif required == 3 then
+                Network:InvokeServer("StartRainbow", unpack{{id1,id2,id3}})
+            elseif required == 2 then
+                Network:InvokeServer("StartRainbow", unpack{{id1,id2}})
+            elseif required == 1 then
+                Network:InvokeServer("StartRainbow", unpack{{id1}})
+            end
+
+            -- ✅ Track slot
+            rainbowSlots[slot] = {
+                id = id1,
+                startTime = tick()
+            }
+
+            task.wait(2.5)
+        end
+
+        rainbowCraftThread = nil
+    end)
+end
+
+local function isPlayerStreamed(targetPlayer)
+    return targetPlayer
+        and targetPlayer.Character
+        and targetPlayer.Character.Parent == workspace
+end
+
+local function getPlayerByName(name)
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr.Name == name then
+            return plr
+        end
+    end
+    return nil
+end
+
+local autoBuyPots = false
+local autoBuyThread2 = nil
+
+local function startAutoBuyPots()
+    if autoBuyThread2 then return end -- prevent multiple threads
+
+    autoBuyThread2 = task.spawn(function()
+        while autoBuyPots do
+            for _, amount in ipairs({10, 3, 1}) do
+                Network:InvokeServer("BuyPotionMachine", amount)
+                task.wait(0.3) -- small delay to avoid server kick / throttle
+            end
+
+            task.wait(1) -- delay between full cycles
+        end
+
+        autoBuyThread2 = nil
+    end)
+end
+
+local function getHolder()
+    return player.PlayerGui
+        :WaitForChild("RightHud")
+        :WaitForChild("Main")
+        :WaitForChild("RightUI")
+        :WaitForChild("Items")
+        :WaitForChild("List")
+        :WaitForChild("Holder")
+end
+
+local function haselectricspins()
+    local holder = getHolder()
+
+    for _, child in ipairs(holder:GetChildren()) do
+        if child:IsA("Frame") and child.Name == "ElectricSpins" then
+            return true
+        end
+    end
+
+    return false
+end
+
+
+local function StartSpectate()
+    if spectating then return end
+    if not targetname then
+        return
+    end
+
+    local targetPlayer = getPlayerByName(targetname)
+    if not targetPlayer then
+        return
+    end
+
+    -- 🚫 NOT STREAMED → TOO FAR
+    if not isPlayerStreamed(targetPlayer) then
+        WindUI:Notify({
+            Title = "Spectral Hub",
+            Content = "Player is too far away to spectate",
+            Duration = 5,
+            Icon = "circle-alert",
+        })
+        return
+    end
+
+    local humanoid = targetPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+    if not humanoid then
+        return
+    end
+
+    spectating = true
+    spectateTarget = targetPlayer
+
+    -- 🎥 CLASSIC ROBLOX SPECTATE
+    Camera.CameraType = Enum.CameraType.Custom
+    Camera.CameraSubject = humanoid
+
+end
+
+local function StopSpectate()
+    if not spectating then return end
+
+    spectating = false
+    spectateTarget = nil
+
+    -- 🔓 RESTORE YOUR CAMERA
+    Camera.CameraType = Enum.CameraType.Custom
+
+    local myChar = Players.LocalPlayer.Character
+    if myChar then
+        local hum = myChar:FindFirstChildWhichIsA("Humanoid")
+        if hum then
+            Camera.CameraSubject = hum
+        end
+    end
+
+end
+
+local function BypassFunction(UnBypassed)
+    if UnBypassed == "" then return end
+    if Method == "CommaV1" then
+        local Tricker = "؍"
+        Bypass = ""
+        local Reversed, Characters, ReversedDisplay, CharactersDisplay, IsLTR = {}, {}, {}, {}, true
+        for Count, CodePoint in utf8.codes(UnBypassed) do table.insert(Characters, utf8.char(CodePoint)) end
+        for _, CodePoint in utf8.codes(UnBypassed) do
+            if (CodePoint >= 0x0590 and CodePoint <= 0x08FF) or (CodePoint >= 0xFB50 and CodePoint <= 0xFEFF) then IsLTR = false break end
+        end
+        if IsLTR then for Count = #Characters, 1, -1 do table.insert(Reversed, Characters[Count]) end else Reversed = Characters end
+        for Count, Letter in ipairs(Reversed) do Bypass = Bypass .. Tricker .. Letter end
+        for Count, CodePoint in utf8.codes(Bypass) do table.insert(CharactersDisplay, utf8.char(CodePoint)) end
+        if IsLTR then for Count = #CharactersDisplay, 1, -1 do table.insert(ReversedDisplay, CharactersDisplay[Count]) end else ReversedDisplay = CharactersDisplay end
+    elseif Method == "CommaV2" then
+        local Tricker = "ﹺ"
+        Bypass = ""
+        local Reversed, Characters, ReversedDisplay, CharactersDisplay, IsLTR = {}, {}, {}, {}, true
+        for Count, CodePoint in utf8.codes(UnBypassed) do table.insert(Characters, utf8.char(CodePoint)) end
+        for _, CodePoint in utf8.codes(UnBypassed) do
+            if (CodePoint >= 0x0590 and CodePoint <= 0x08FF) or (CodePoint >= 0xFB50 and CodePoint <= 0xFEFF) then IsLTR = false break end
+        end
+        if IsLTR then for Count = #Characters, 1, -1 do table.insert(Reversed, Characters[Count]) end else Reversed = Characters end
+        for Count, Letter in ipairs(Reversed) do Bypass = Bypass .. Tricker .. Letter end
+        for Count, CodePoint in utf8.codes(Bypass) do table.insert(CharactersDisplay, utf8.char(CodePoint)) end
+        if IsLTR then for Count = #CharactersDisplay, 1, -1 do table.insert(ReversedDisplay, CharactersDisplay[Count]) end else ReversedDisplay = CharactersDisplay end
+    elseif Method == "LineV1" then
+        local Tricker = "ـ"
+        Bypass = ""
+        local Reversed, Characters, ReversedDisplay, CharactersDisplay, IsLTR = {}, {}, {}, {}, true
+        for Count, CodePoint in utf8.codes(UnBypassed) do table.insert(Characters, utf8.char(CodePoint)) end
+        for _, CodePoint in utf8.codes(UnBypassed) do
+            if (CodePoint >= 0x0590 and CodePoint <= 0x08FF) or (CodePoint >= 0xFB50 and CodePoint <= 0xFEFF) then IsLTR = false break end
+        end
+        if IsLTR then for Count = #Characters, 1, -1 do table.insert(Reversed, Characters[Count]) end else Reversed = Characters end
+        for Count, Letter in ipairs(Reversed) do Bypass = Bypass .. Tricker .. Letter end
+        for Count, CodePoint in utf8.codes(Bypass) do table.insert(CharactersDisplay, utf8.char(CodePoint)) end
+        if IsLTR then for Count = #CharactersDisplay, 1, -1 do table.insert(ReversedDisplay, CharactersDisplay[Count]) end else ReversedDisplay = CharactersDisplay end
+    elseif Method == "LineV2" then
+        local Tricker = "־"
+        Bypass = ""
+        local Reversed, Characters, ReversedDisplay, CharactersDisplay, IsLTR = {}, {}, {}, {}, true
+        for Count, CodePoint in utf8.codes(UnBypassed) do table.insert(Characters, utf8.char(CodePoint)) end
+        for _, CodePoint in utf8.codes(UnBypassed) do
+            if (CodePoint >= 0x0590 and CodePoint <= 0x08FF) or (CodePoint >= 0xFB50 and CodePoint <= 0xFEFF) then IsLTR = false break end
+        end
+        if IsLTR then for Count = #Characters, 1, -1 do table.insert(Reversed, Characters[Count]) end else Reversed = Characters end
+        for Count, Letter in ipairs(Reversed) do Bypass = Bypass .. Tricker .. Letter end
+        for Count, CodePoint in utf8.codes(Bypass) do table.insert(CharactersDisplay, utf8.char(CodePoint)) end
+        if IsLTR then for Count = #CharactersDisplay, 1, -1 do table.insert(ReversedDisplay, CharactersDisplay[Count]) end else ReversedDisplay = CharactersDisplay end
+    elseif Method == "Dot" then
+        local Tricker = "؞"
+        Bypass = ""
+        local Reversed, Characters, ReversedDisplay, CharactersDisplay, IsLTR = {}, {}, {}, {}, true
+        for Count, CodePoint in utf8.codes(UnBypassed) do table.insert(Characters, utf8.char(CodePoint)) end
+        for _, CodePoint in utf8.codes(UnBypassed) do
+            if (CodePoint >= 0x0590 and CodePoint <= 0x08FF) or (CodePoint >= 0xFB50 and CodePoint <= 0xFEFF) then IsLTR = false break end
+        end
+        if IsLTR then for Count = #Characters, 1, -1 do table.insert(Reversed, Characters[Count]) end else Reversed = Characters end
+        for Count, Letter in ipairs(Reversed) do Bypass = Bypass .. Tricker .. Letter end
+        for Count, CodePoint in utf8.codes(Bypass) do table.insert(CharactersDisplay, utf8.char(CodePoint)) end
+        if IsLTR then for Count = #CharactersDisplay, 1, -1 do table.insert(ReversedDisplay, CharactersDisplay[Count]) end else ReversedDisplay = CharactersDisplay end
+    elseif Method == "Quote" then
+        local Tricker = "׳"
+        Bypass = ""
+        local Reversed, Characters, ReversedDisplay, CharactersDisplay, IsLTR = {}, {}, {}, {}, true
+        for Count, CodePoint in utf8.codes(UnBypassed) do table.insert(Characters, utf8.char(CodePoint)) end
+        for _, CodePoint in utf8.codes(UnBypassed) do
+            if (CodePoint >= 0x0590 and CodePoint <= 0x08FF) or (CodePoint >= 0xFB50 and CodePoint <= 0xFEFF) then IsLTR = false break end
+        end
+        if IsLTR then for Count = #Characters, 1, -1 do table.insert(Reversed, Characters[Count]) end else Reversed = Characters end
+        for Count, Letter in ipairs(Reversed) do Bypass = Bypass .. Tricker .. Letter end
+        for Count, CodePoint in utf8.codes(Bypass) do table.insert(CharactersDisplay, utf8.char(CodePoint)) end
+        if IsLTR then for Count = #CharactersDisplay, 1, -1 do table.insert(ReversedDisplay, CharactersDisplay[Count]) end else ReversedDisplay = CharactersDisplay end
+    elseif Method == "DoubleQuote" then
+        local Tricker = "״"
+        Bypass = ""
+        local Reversed, Characters, ReversedDisplay, CharactersDisplay, IsLTR = {}, {}, {}, {}, true
+        for Count, CodePoint in utf8.codes(UnBypassed) do table.insert(Characters, utf8.char(CodePoint)) end
+        for _, CodePoint in utf8.codes(UnBypassed) do
+            if (CodePoint >= 0x0590 and CodePoint <= 0x08FF) or (CodePoint >= 0xFB50 and CodePoint <= 0xFEFF) then IsLTR = false break end
+        end
+        if IsLTR then for Count = #Characters, 1, -1 do table.insert(Reversed, Characters[Count]) end else Reversed = Characters end
+        for Count, Letter in ipairs(Reversed) do Bypass = Bypass .. Tricker .. Letter end
+        for Count, CodePoint in utf8.codes(Bypass) do table.insert(CharactersDisplay, utf8.char(CodePoint)) end
+        if IsLTR then for Count = #CharactersDisplay, 1, -1 do table.insert(ReversedDisplay, CharactersDisplay[Count]) end else ReversedDisplay = CharactersDisplay end
+    elseif Method == "Star" then
+        local Tricker = "٭"
+        Bypass = ""
+        local Reversed, Characters, ReversedDisplay, CharactersDisplay, IsLTR = {}, {}, {}, {}, true
+        for Count, CodePoint in utf8.codes(UnBypassed) do table.insert(Characters, utf8.char(CodePoint)) end
+        for _, CodePoint in utf8.codes(UnBypassed) do
+            if (CodePoint >= 0x0590 and CodePoint <= 0x08FF) or (CodePoint >= 0xFB50 and CodePoint <= 0xFEFF) then IsLTR = false break end
+        end
+        if IsLTR then for Count = #Characters, 1, -1 do table.insert(Reversed, Characters[Count]) end else Reversed = Characters end
+        for Count, Letter in ipairs(Reversed) do Bypass = Bypass .. Tricker .. Letter end
+        for Count, CodePoint in utf8.codes(Bypass) do table.insert(CharactersDisplay, utf8.char(CodePoint)) end
+        if IsLTR then for Count = #CharactersDisplay, 1, -1 do table.insert(ReversedDisplay, CharactersDisplay[Count]) end else ReversedDisplay = CharactersDisplay end
+    end
+end
+
+local function getOtherPlayerNames()
+    local list = {}
+    for _, plr in ipairs(players:GetPlayers()) do
+        if plr ~= players.LocalPlayer then
+            table.insert(list, plr.Name)
+        end
+    end
+    return list
+end
+
+
+
+-- Function to enable Walk Fling
+local function StartWalkFling()
+    if walkflinging then return end -- Prevent duplicate connections
+    walkflinging = true
+
+    -- Ensure Walk Fling stops on death
+    local humanoid = player.Character:FindFirstChildWhichIsA("Humanoid")
+    if humanoid then
+        humanoid.Died:Connect(function()
+            execCmd("unwalkfling")
+            walkflinging = false
+        end)
+    end
+
+    -- Walk fling logic loop
+    flingConnection = RunService.Heartbeat:Connect(function()
+        local character = player.Character
+        local root = character:FindFirstChild("HumanoidRootPart")
+        local vel, movel = nil, 0.1
+
+        -- Ensure root exists
+        while not (character and character.Parent and root and root.Parent) do
+            RunService.Heartbeat:Wait()
+            character = player.Character
+            root = character:FindFirstChild("HumanoidRootPart")
+        end
+
+        vel = root.Velocity
+        root.Velocity = vel * 1000000 + Vector3.new(0, 1000000, 0)
+
+        RunService.RenderStepped:Wait()
+        if character and root and root.Parent then
+            root.Velocity = vel
+        end
+
+        RunService.Stepped:Wait()
+        if character and root and root.Parent then
+            root.Velocity = vel + Vector3.new(0, movel, 0)
+            movel = movel * -1
+        end
+    end)
+end
+
+local function StopWalkFling()
+    if not walkflinging then return end -- No need to stop if it's already off
+    walkflinging = false
+
+    -- Disconnect fling connection
+    if flingConnection then
+        flingConnection:Disconnect()
+        flingConnection = nil
+    end
+
+    -- Reset RootPart velocity
+    local character = player.Character
+    local root = character:FindFirstChild("HumanoidRootPart")
+    if root then
+        root.Velocity = Vector3.new(0, 0, 0)
+    end
+end
+
+-- Handle respawning to stop Walk Fling
+player.CharacterAdded:Connect(function()
+    if walkflinging then
+        StopWalkFling() -- Reset fling on respawn
+    end
+end)
+
+local function TPTool()
+    -- Services
+    local UserInputService = game:GetService("UserInputService")
+
+    -- Variables
+    local backpack = player:WaitForChild("Backpack")
+
+    -- Remove any existing Teleport Tool, even if it's equipped
+    local existingTool = backpack:FindFirstChild("Teleport Tool")
+    if existingTool then
+        -- If the tool is equipped, unequip it first
+        if player.Character:FindFirstChild("Teleport Tool") then
+            player.Character:FindFirstChild("Teleport Tool"):Destroy()  -- Destroy the equipped tool
+        end
+        existingTool:Destroy()  -- Destroy the tool in the backpack
+    end
+
+    -- Tool Setup
+    local teleportTool = Instance.new("Tool")
+    teleportTool.Name = "Teleport Tool"
+    teleportTool.RequiresHandle = false -- No physical handle needed
+    teleportTool.Parent = backpack
+
+    -- Animation Setup
+    local animationId = "rbxassetid://15957361339" -- Replace with your animation ID
+    local animation = Instance.new("Animation")
+    animation.AnimationId = animationId
+
+    -- Audio Setup
+    local audioId = "rbxassetid://14047463699" -- Replace with your audio ID
+    local sound = Instance.new("Sound")
+    sound.SoundId = audioId
+
+    -- Function to Play Animation
+    local function playAnimation()
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+        if humanoid then
+            local animationTrack = humanoid:LoadAnimation(animation)
+            animationTrack:Play()
+        end
+    end
+
+    -- Function to Play Audio
+    local function playAudio()
+        sound.Parent = character:WaitForChild("HumanoidRootPart") -- Attach sound to the character
+        sound:Play() -- Play the sound
+    end
+
+    -- Teleport Function
+    local function teleportToMousePosition()
+        local mouse = player:GetMouse()
+        local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+        -- Play the animation and audio
+        playAnimation()
+        playAudio()
+
+        -- Get the mouse position and teleport
+        local targetPosition = mouse.Hit.Position
+        humanoidRootPart.CFrame = CFrame.new(targetPosition + Vector3.new(0, 5, 0)) -- Offset to avoid clipping
+    end
+
+    -- Key Press Detection for "T"
+    teleportTool.Activated:Connect(function()
+        -- Listen for "T" key press
+        UserInputService.InputBegan:Connect(function(input, gameProcessed)
+            if input.KeyCode == Enum.KeyCode.T and not gameProcessed then
+                teleportToMousePosition()
+            end
+        end)
+    end)
+
+    -- Ensure Tool is Equipped
+    teleportTool.Activated:Connect(function()
+        -- Player can now press "T" to activate teleportation, animation, and audio
+    end)
+    
+end
+
+--------------------------------------------------
+-- FIND EVENTS FOLDER
+--------------------------------------------------
+local function findEventsFolder()
+	for _, folder in ipairs(ReplicatedStorage:GetChildren()) do
+		if folder:IsA("Folder") then
+			local events = folder:FindFirstChild("Events")
+			if events and events:IsA("Folder") then
+				return events
+			end
+		end
+	end
+end
+
+--------------------------------------------------
+-- FIND FUNCTIONS FOLDER
+--------------------------------------------------
+local function findFunctionsFolder()
+	for _, folder in ipairs(ReplicatedStorage:GetChildren()) do
+		if folder:IsA("Folder") then
+			local functions = folder:FindFirstChild("Functions")
+			if functions and functions:IsA("Folder") then
+				return functions
+			end
+		end
+	end
+end
+
+--------------------------------------------------
+-- GET FOLDERS
+--------------------------------------------------
+local eventsFolder = findEventsFolder()
+local functionsFolder = findFunctionsFolder()
+
+if not eventsFolder then
+	return
+end
+
+if not functionsFolder then
+	return
+end
+
+--------------------------------------------------
+-- SORT HELPER (STABLE ORDER)
+--------------------------------------------------
+local function sortByCreation(instances)
+	table.sort(instances, function(a, b)
+		return a:GetDebugId() < b:GetDebugId()
+	end)
+end
+
+--------------------------------------------------
+-- NAME VALIDATION (⭐ NEW ⭐)
+--------------------------------------------------
+local function isMeaningfulName(name)
+	if not name or name == "" then
+		return false
+	end
+	if tonumber(name) ~= nil then
+		return false -- numeric-only names
+	end
+	return true
+end
+
+--------------------------------------------------
+-- RENAME EVENTS (01, 02, 03…)
+--------------------------------------------------
+local events = eventsFolder:GetChildren()
+sortByCreation(events)
+
+local eventCounter = 1
+
+for _, child in ipairs(events) do
+	if not isMeaningfulName(child.Name) then
+		child.Name = string.format("%02d", eventCounter)
+		eventCounter += 1
+	end
+end
+
+--------------------------------------------------
+-- RENAME FUNCTIONS (100, 101, 102…)
+--------------------------------------------------
+local functions = functionsFolder:GetChildren()
+sortByCreation(functions)
+
+local functionCounter = 100
+
+for _, child in ipairs(functions) do
+	if not isMeaningfulName(child.Name) then
+		child.Name = tostring(functionCounter) 
+		functionCounter += 1
+	end
+end 
+
+
+--------------------------------------------------
+-- STARTING MENU
+--------------------------------------------------
+
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+
+
+WindUI:Localization({ -- it automatically detects the user's language 
+    Enabled = true,
+    Prefix = "loc:",
+    DefaultLanguage = "en",
+    Translations = {
+        ["ru"] = {
+            ["WINDUI_EXAMPLE"] = "WindUI Пример",
+            ["WELCOME"] = "Добро пожаловать в WindUI!",
+            ["SETTINGS"] = "Настройки",
+            ["FEATURES"] = "Функционал",
+            ["LOGO"] = "rbxassetid://...", -- russian logo
+        },
+        ["en"] = {
+            ["WINDUI_EXAMPLE"] = "WindUI Example",
+            ["WELCOME"] = "Welcome to WindUI!",
+            ["SETTINGS"] = "Settings",
+            ["FEATURES"] = "Features",
+            ["LOGO"] = "rbxassetid://...", -- english logo
+        },
+        -- and more languages...
+    }
+})
+
+local Window = WindUI:CreateWindow({
+    Title = "Spectral Hub",
+    Icon = "door-open", -- lucide icon
+    Author = "by .pedroleonardo",
+    Folder = "SpectralHub",
+    
+    -- ↓ This all is Optional. You can remove it.
+    Size = UDim2.fromOffset(580, 460),
+    MinSize = Vector2.new(560, 350),
+    MaxSize = Vector2.new(850, 560),
+    Transparent = true,
+    Theme = "Dark",
+    Resizable = true,
+    SideBarWidth = 200,
+    BackgroundImageTransparency = 0.42,
+    HideSearchBar = false,
+    ScrollBarEnabled = true,
+
+    User = {
+        Enabled = true,
+        Anonymous = false,
+        Callback = function()
+            setclipboard("https://www.roblox.com/users/" .. UserId .. "/profile")
+        end,
+    },                                                             
+})
+
+Window:EditOpenButton({
+    Title = "Open Spectral Hub",
+    Icon = "monitor",
+    CornerRadius = UDim.new(0,16),
+    StrokeThickness = 2,
+    Color = ColorSequence.new( -- gradient
+        Color3.fromHex("FF0F7B"), 
+        Color3.fromHex("F89B29")
+    ),
+    OnlyMobile = false,
+    Enabled = true,
+    Draggable = true,
+})
+
+local ConfigManager = Window.ConfigManager
+local myConfig = ConfigManager:CreateConfig("Spectral Hub Config") -- will be saved as config1
+local configtable = ConfigManager:AllConfigs()
+
+--------------------------------------------------
+-- CREATING THE TABS 1
+--------------------------------------------------
+
+Info = Window:Tab({
+    Title = "Information",
+    Icon = "book-check", -- optional
+    Locked = false,
+})
+
+Window:Divider()
+
+local static1 = Window:Section({
+    Title = "Universal Features",
+    Opened = false,
+})
+
+local static2 = Window:Section({
+    Title = "Main Features",
+    Opened = false,
+})
+
+local Universal = static1:Tab({
+    Title = "Universal",
+    Icon = "recycle", -- optional
+    Locked = false,
+})
+local chatbypass = static1:Tab({
+    Title = "Chat Bypasser",
+    Icon = "speech", -- optional
+    Locked = false,
+})
+local Teleports = static2:Tab({
+    Title = "Teleports",
+    Icon = "bird", -- optional
+    Locked = false,
+})
+local AutoUpgrades = static2:Tab({
+    Title = "Upgrades",
+    Icon = "arrow-big-up-dash", -- optional
+    Locked = false,
+})
+local AutoFarm = static2:Tab({
+    Title = "AutoFarm",
+    Icon = "list", -- optional
+    Locked = false,
+})
+local AutoFarmSettings = static2:Tab({
+    Title = "AutoFarm Settings",
+    Icon = "list", -- optional
+    Locked = false,
+})
+
+Window:Divider()
+
+local Settings = Window:Tab({
+    Title = "Settings",
+    Icon = "settings", -- optional
+    Locked = false,
+})
+local Gamehub = Window:Tab({
+    Title = "Game Hub",
+    Icon = "bird", -- optional
+    Locked = false,
+})
+
+Window:Tag({
+    Title = "Undetected",
+    Color = Color3.fromHex("#30ff6a"),
+    Radius = 13, -- from 0 to 13
+})
+
+--------------------------------------------------
+-- INFORMATION SECTION
+--------------------------------------------------
+
+local Button = Info:Button({
+    Title = "Spectral Hub Discord",
+    Desc = "Copies our discord link to your clipboard",
+    Locked = false,
+    Callback = function()
+        setclipboard("https://discord.gg/ysmTfrP6Hs")
+        WindUI:Notify({
+        Title = "Spectral Hub",
+        Content = "Discord Link Has Been Copied To Your Clipboard",
+        Duration = 5, -- 3 seconds
+        Icon = "circle-alert",
+        })
+    end
+})
+
+local Section = Info:Section({ 
+    Title = "Executor: " .. executor,
+    Box = true,
+    TextTransparency = 0.2,
+})
+local Section = Info:Section({ 
+    Title = "Menu Version: Premium",
+    Box = true,
+    TextTransparency = 0.2,
+})
+usernamelabel = Info:Section({ 
+    Title = "UserName: " .. player.Name,
+    Box = true,
+    TextTransparency = 0.2,
+})
+local Section = Info:Section({ 
+    Title = "Current Game: " .. GameName,
+    Box = true,
+    TextTransparency = 0.2,
+})
+
+--------------------------------------------------
+-- UNIVERSAL SECTION
+--------------------------------------------------
+
+local Button = Universal:Button({
+    Title = "Infinite Yield",
+    Desc = "Runs The Infinite Yield Script",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+    end
+})
+
+local Button = Universal:Button({
+    Title = "Dex Explore",
+    Desc = "Runs The Infinite Dex Explorer Script",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Jamaloneil123/Dex/refs/heads/main/dexexplorer"))()
+    end
+})
+
+local Button = Universal:Button({
+    Title = "Roblox UserId",
+    Desc = "Click To Copy Your UserId",
+    Locked = false,
+    Callback = function()
+        setclipboard(UserId)
+        WindUI:Notify({
+        Title = "Spectral Hub",
+        Content = "UserId Has Been Copied To Your Clipboard",
+        Duration = 5, -- 3 seconds
+        Icon = "circle-alert",
+        })
+    end
+})
+
+local Button = Universal:Button({
+    Title = "Teleport Tool",
+    Desc = "Will Give You A Tool That Lets You Teleport To Wherever You Click",
+    Locked = false,
+    Callback = function()
+        TPTool()
+        WindUI:Notify({
+        Title = "Spectral Hub",
+        Content = "Equip The Tool Then Click And Now You Can Press T Anywhere To Tp! (You Dont Have To Have It Equipped Now)",
+        Duration = 8, -- 3 seconds
+        Icon = "circle-alert",
+        })
+    end
+})
+
+local Slider = Universal:Slider({
+    Title = "Speed Changer",
+    Desc = "This Will Make You Unstunnable",
+    Step = 2,
+    Value = {
+        Min = 16,
+        Max = 2000,
+        Default = 20,
+    },
+    Callback = function(value)
+        loopSpeedValue = value -- Update the global speed value
+        local speaker = game.Players.LocalPlayer
+        local Char = speaker.Character or workspace:FindFirstChild(speaker.Name)
+        local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
+        if Human then
+            Human.WalkSpeed = loopSpeedValue
+        end
+        local function ApplyWalkSpeed()
+            if Char and Human then
+                Human.WalkSpeed = loopSpeedValue
+            end
+        end
+        -- Enable the loop
+        if Human then
+            ApplyWalkSpeed() -- Apply once immediately
+        end
+        -- Connect the loop to enforce WalkSpeed changes
+        loopConnection = Human:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+            ApplyWalkSpeed()
+        end)
+            
+        -- Handle respawning
+        speaker.CharacterAdded:Connect(function(newChar)
+            Char, Human = newChar, newChar:WaitForChild("Humanoid")
+            ApplyWalkSpeed()
+            loopConnection = Human:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+            ApplyWalkSpeed()
+        end)
+        end)
+    end
+})
+
+local Slider = Universal:Slider({
+    Title = "Jump Power Changer",
+    Desc = "Changes How High You Jump",
+    Step = 2,
+    Value = {
+        Min = 50,
+        Max = 1000,
+        Default = 50,
+    },
+    Callback = function(value)
+         -- Update the JumpPower value
+        loopJumpPowerValue = value
+        
+        -- Get the local player, character, and humanoid
+        local speaker = game.Players.LocalPlayer
+        local Char = speaker.Character or workspace:FindFirstChild(speaker.Name)
+        local Human = Char and Char:FindFirstChildWhichIsA("Humanoid")
+        
+        -- Function to apply the JumpPower
+        local function ApplyJumpPower()
+            if Human then
+                Human.JumpPower = loopJumpPowerValue
+            end
+        end
+        
+                -- Apply JumpPower once
+        if Human then
+            ApplyJumpPower()
+        end
+        
+        -- Disconnect the previous connection if it exists
+        if loopJumpConnection then
+            loopJumpConnection:Disconnect()
+        end
+        
+        -- Connect to enforce JumpPower changes
+        if Human then
+            loopJumpConnection = Human:GetPropertyChangedSignal("JumpPower"):Connect(function()
+                ApplyJumpPower()
+            end)
+        end
+        
+        -- Handle character respawning
+        speaker.CharacterAdded:Connect(function(newChar)
+            Char = newChar
+            Human = newChar:WaitForChild("Humanoid")
+            ApplyJumpPower()
+        
+            -- Disconnect and reconnect the loop
+            if loopJumpConnection then
+                loopJumpConnection:Disconnect()
+            end
+        
+            loopJumpConnection = Human:GetPropertyChangedSignal("JumpPower"):Connect(function()
+                ApplyJumpPower()
+            end)
+        end)
+    end
+})
+
+local Toggle = Universal:Toggle({
+    Title = "Walk Fling",
+    Type = "Toggle",
+    Value = false, -- default value
+    Callback = function(state) 
+        if state then
+            StartWalkFling() -- Enable fling
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+        else
+            StopWalkFling() -- Disable fling
+        end
+    end
+})
+
+    --------------------------------------------------
+    -- CHAT BYPASS
+    --------------------------------------------------
+
+local Section = chatbypass:Section({ 
+    Title = "Information:",
+    Box = true,
+    TextTransparency = 0.2,
+})
+
+local ServiceLabel = chatbypass:Section({ 
+    Title = "Detecting Service...",
+    Box = true,
+    TextTransparency = 0.2,
+})
+
+if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+    ServiceLabel:SetTitle("Chat: TextChatService", nil, nil, false)
+elseif TextChatService.ChatVersion == Enum.ChatVersion.LegacyChatService then
+    ServiceLabel:SetTitle("Chat: LegacyChatService", nil, nil, false)
+end
+
+chatbypass:Divider()
+
+local label = chatbypass:Section({ 
+    Title = "Methods:",
+    Box = true,
+    TextTransparency = 0.2,
+})
+
+local MethodLabel = chatbypass:Section({ 
+    Title = "Selected: None",
+    Box = true,
+    TextTransparency = 0.2,
+})
+
+local MethodDropdown = chatbypass:Dropdown({
+    Title = "Select Bypass Method",
+    Values = { "CommaV1", "CommaV2", "LineV1", "LineV2", "Dot", "Quote", "DoubleQuote", "Star" },
+    Value = "None",
+    Callback = function(option) 
+        Method = option
+        MethodLabel:SetTitle("Selected: " .. Method .. " Method")
+        if UnBypassedString ~= "" then BypassFunction(UnBypassedString) end
+    end
+})
+
+chatbypass:Divider()
+
+label = chatbypass:Section({ 
+    Title = "Bypass:",
+    Box = true,
+    TextTransparency = 0.2,
+})
+
+UnBypassInput = chatbypass:Section({ 
+    Title = "Input: None",
+    Box = true,
+    TextTransparency = 0.2,
+})
+
+BypassInput = chatbypass:Input({
+    Title = "Input Field",
+    Value = "",
+    Type = "Input", -- or "Textarea"
+    Placeholder = "Enter text",
+    Callback = function(UnBypassed) 
+        UnBypassInput:SetTitle("Input: " .. tostring(UnBypassed))
+        UnBypassedString = UnBypassed
+        BypassFunction(UnBypassed)
+    end
+})
+
+Sendmessage = chatbypass:Button({
+    Title = "Send Message",
+    Desc = "Will Send Your Message In A Bypassed Format",
+    Locked = false,
+    Callback = function()
+        if Method == "None" then
+            WindUI:Notify({
+                Title = "Spectral Hub",
+                Content = "Please Select A Bypass Method",
+                Duration = 5, -- 3 seconds
+                Icon = "circle-alert",
+            })
+        else
+            local Chatting, Chat = pcall(function() return TextChatService.ChatInputBarConfiguration.TargetTextChannel end)
+            if Chatting and Chat then Chat:SendAsync(Bypass) end
+        end
+    end
+})
+
+--------------------------------------------------
+-- TELEPORTS TAB
+--------------------------------------------------
+
+IslandTeleports = Teleports:Dropdown({
+    Title = "Island Teleports",
+    Values = {"None", "World 1", "Forest", "Winter", "Desert", "Jungle", "Heaven", "Dojo", "Volcano", "Candy", "Atlantis", "Space", "World 2", "Kryo", "Magma", "Celestial", "Holographic", "Lunar"},
+    Value = "None", 
+    Callback = function(option)
+        local selected = typeof(option) == "table" and option[1] or option
+        if not selected or selected == "None" then
+            return
+        end
+
+        if selected == "World 1" then
+            Network:InvokeServer("TeleportWorld", "Main")
+            world = 1
+        elseif selected == "World 2" then
+            Network:InvokeServer("TeleportWorld", "Space")
+            world = 2
+        end
+
+        -- change world if required
+        if World1[selected] and world ~= 1 then
+            Network:InvokeServer("TeleportWorld", "Main")
+            world = 1
+            task.wait(0.5)
+        elseif World2[selected] and world ~= 2 then
+            Network:InvokeServer("TeleportWorld", "Space")
+            world = 2
+            task.wait(0.5)
+        end
+
+        -- ALWAYS teleport to the zone
+        Network:InvokeServer("TeleportZone", selected)
+    end
+})
+
+IslandTeleports = Teleports:Dropdown({
+    Title = "Other Teleports",
+    Values = {"None", "Golden Machine", "Rainbow Machine", "Electric Machine", "Electric Wheel", "Rank Rewards", "Enchant Machine", "Portals"},
+    Value = "None",
+    Callback = function(option)
+        local selected = option
+            if typeof(option) == "table" then
+                selected = option[1]
+            end
+
+            if selected == "None" then
+                return
+            end
+
+            Teleportcoords = selected
+
+            --------------------------------------------------
+            -- IF CURRENTLY IN WORLD 1 → CHECK WORLD 1 FIRST
+            --------------------------------------------------
+            if world == 1 then
+                if World1[Teleportcoords] then
+                    hrp.CFrame = CFrame.new(World1[Teleportcoords])
+                    return
+                elseif World2[Teleportcoords] then
+                    Network:InvokeServer("TeleportWorld", "Space")
+                    world = 2
+                    task.wait(1)
+                    hrp.CFrame = CFrame.new(World2[Teleportcoords])
+                    return
+                end
+            end
+
+            --------------------------------------------------
+            -- IF CURRENTLY IN WORLD 2 → CHECK WORLD 2 FIRST
+            --------------------------------------------------
+            if world == 2 then
+                if World2[Teleportcoords] then
+                    hrp.CFrame = CFrame.new(World2[Teleportcoords])
+                    return
+                elseif World1[Teleportcoords] then
+                    Network:InvokeServer("TeleportWorld", "Main")
+                    world = 1
+                    task.wait(1)
+                    hrp.CFrame = CFrame.new(World1[Teleportcoords])
+                    return
+                end
+            end
+    end
+})
+
+playeroptions = Teleports:Section({ 
+    Title = "Player: None", 
+    Box = true,
+    TextTransparency = 0.2,
+})
+
+--------------------------------------------------
+-- SPECTATE PLAYER
+--------------------------------------------------
+
+playeroptions:Button({
+    Title = "Toggle Spectate",
+
+    Callback = function()
+        if not targetname then
+            WindUI:Notify({
+                Title = "Spectral Hub",
+                Content = "Please select a target player first",
+                Duration = 5,
+                Icon = "circle-alert",
+            })
+            return
+        end
+
+        if not spectating then
+            StartSpectate() -- ❗ NO ARGUMENTS
+        else
+            StopSpectate()
+        end
+    end
+})
+
+--------------------------------------------------
+-- TELEPORT TO PLAYER
+--------------------------------------------------
+
+playeroptions:Button({
+    Title = "Teleport To",
+    Desc = "Teleport to the selected player",
+    Callback = function()
+        if not targetname then
+            WindUI:Notify({
+                Title = "Spectral Hub",
+                Content = "Please select a target player first",
+                Duration = 5,
+                Icon = "circle-alert",
+            })
+            return
+        end
+
+        local targetPlayer = getPlayerByName(targetname)
+        if not targetPlayer then
+            return
+        end
+
+        -- 🚫 NOT STREAMED → TOO FAR
+        if not isPlayerStreamed(targetPlayer) then
+            WindUI:Notify({
+                Title = "Spectral Hub",
+                Content = "Player is too far away to teleport",
+                Duration = 5,
+                Icon = "circle-alert",
+            })
+            return
+        end
+
+        local targetHRP = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not targetHRP then
+            return
+        end
+
+        local myChar = players.LocalPlayer.Character
+        local myHRP = myChar and myChar:FindFirstChild("HumanoidRootPart")
+        if not myHRP then
+            return
+        end
+
+        myHRP.CFrame = targetHRP.CFrame
+    end
+})
+
+--------------------------------------------------
+-- PLAYER SELECT DROPDOWN
+--------------------------------------------------
+
+PlayerTeleportDropdown = Teleports:Dropdown({
+    Title = "Select Player",
+    Desc = "Select a target player",
+    Values = getOtherPlayerNames(),
+    Value = nil,
+    Multi = false,
+    AllowNone = true,
+    Callback = function(option)
+    local selected = typeof(option) == "table" and option[1] or option
+    if not selected then return end
+
+    local targetPlayer = getPlayerByName(selected)
+    if not targetPlayer then
+        return
+    end
+
+    target = targetPlayer
+    targetname = targetPlayer.Name
+    playeroptions:SetTitle("Player: " .. targetname)
+end})
+
+function safeRefreshPlayers()
+    task.delay(0.1, function()
+        if PlayerTeleportDropdown then
+            local ok, err = pcall(function()
+                PlayerTeleportDropdown:Refresh(getOtherPlayerNames())
+            end)
+            if not ok then
+            end
+        end
+    end)
+end
+
+players.PlayerAdded:Connect(function()
+    safeRefreshPlayers()
+end)
+
+players.PlayerRemoving:Connect(function()
+    safeRefreshPlayers()
+end)
+
+Teleports:Button({
+    Title = "Unlock All Islands",
+    Callback = function()
+        tpislands()
+        hrp.CFrame = originalCFrame
+    end
+})
+
+--------------------------------------------------
+-- STATING AUTO UPGRADES
+--------------------------------------------------
+
+Toggle = AutoUpgrades:Toggle({
+    Title = "Auto Max Click Multiplier",
+    Type = "Toggle",
+    Value = false, -- default value
+    Callback = function(state) 
+        autoupgrading1 = state -- ✅ use the global flag
+        if autoupgrading1 then
+            task.spawn(function()
+                while autoupgrading1 do
+                    Network:InvokeServer("UpgradeGemShop", "ClickMultiplier", nil)
+                end
+            end)
+        end
+    end
+})
+Toggle = AutoUpgrades:Toggle({
+    Title = "Purchase Free AutoClicker",
+    Type = "Toggle",
+    Value = false, -- default value
+    Callback = function(state) 
+        autoupgrading2 = state -- ✅ use the global flag
+        if autoupgrading2 then
+            task.spawn(function()
+                while autoupgrading2 do
+                    Network:InvokeServer("UpgradeGemShop", "FreeAutoClicker", nil)
+                end
+            end)
+        end
+    end
+})
+Toggle = AutoUpgrades:Toggle({
+    Title = "Auto Max Auto Click Speed",
+    Type = "Toggle",
+    Value = false, -- default value
+    Callback = function(state) 
+        autoupgrading3 = state -- ✅ use the global flag
+        if autoupgrading3 then
+            task.spawn(function()
+                while autoupgrading3 do
+                    Network:InvokeServer("UpgradeGemShop", "AutoClickerSpeed", nil)
+                end
+            end)
+        end
+    end
+})
+Toggle = AutoUpgrades:Toggle({
+    Title = "Auto Max Golden Luck",
+    Type = "Toggle",
+    Value = false, -- default value
+    Callback = function(state) 
+        autoupgrading4 = state -- ✅ use the global flag
+        if autoupgrading4 then
+            task.spawn(function()
+                while autoupgrading4 do
+                    Network:InvokeServer("UpgradeGemShop", "GoldenLuck", nil)
+                end
+            end)
+        end
+    end
+})
+Toggle = AutoUpgrades:Toggle({
+    Title = "Auto Max Critical Chance",
+    Type = "Toggle",
+    Value = false, -- default value
+    Callback = function(state) 
+        autoupgrading5 = state -- ✅ use the global flag
+        if autoupgrading5 then
+            task.spawn(function()
+                while autoupgrading5 do
+                    Network:InvokeServer("UpgradeGemShop", "CriticalChance", nil)
+                end
+            end)
+        end
+    end
+})
+Toggle = AutoUpgrades:Toggle({
+    Title = "Auto Max Hatch Speed",
+    Type = "Toggle",
+    Value = false, -- default value
+    Callback = function(state) 
+        autoupgrading6 = state -- ✅ use the global flag
+        if autoupgrading6 then
+            task.spawn(function()
+                while autoupgrading6 do
+                    Network:InvokeServer("UpgradeGemShop", "HatchSpeed", nil)
+                end
+            end)
+        end
+    end
+})
+
+--------------------------------------------------
+-- STATING AUTO FARMS
+--------------------------------------------------
+
+Toggle = AutoFarm:Toggle({
+    Title = "Auto Click",
+    Type = "Toggle",
+    Value = false, -- default value
+    Callback = function(state) 
+        TurnedOn = state -- ✅ use the global flag
+        if TurnedOn then
+            task.spawn(function()
+                while TurnedOn do
+                    Network:FireServer("Tap", true, nil, true)
+                    task.wait(autoclickspeed or 0.1) -- ✅ safe fallback
+                end
+            end)
+        end
+    end
+})
+Toggle = AutoFarm:Toggle({
+    Title = "Auto Rebirth",
+    Type = "Toggle",
+    Value = false, -- default value
+    Callback = function(state) 
+        autorebirthtoggle = state
+        if autorebirthtoggle then
+            task.spawn(function()
+                while autorebirthtoggle do
+                    Network:InvokeServer("Rebirth", rebirthamount)
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
+autohatchtoggle2 = AutoFarm:Toggle({
+    Title = "Auto Hatch Egg",
+    Type = "Toggle",
+    Value = false,
+    Callback = function(state)
+        autohatchtoggle = state
+
+        -- 🔴 If turned OFF → just stop
+        if not autohatchtoggle then
+            return
+        end
+
+        -- ❌ No egg selected
+        if not eggname or eggname == "None" then
+            autohatchtoggle = false
+
+            WindUI:Notify({
+                Title = "Spectral Hub",
+                Content = "Please Select An Egg To Hatch!",
+                Duration = 5,
+                Icon = "circle-alert",
+            })
+
+            autohatchtoggle2:Set(false)
+            return
+        end
+
+        -- ✅ Start auto hatch loop
+        task.spawn(function()
+            while autohatchtoggle do
+                Network:InvokeServer(
+                    "OpenEgg",
+                    eggname,
+                    eggamount
+                )
+                task.wait(0.5)
+            end
+        end)
+    end
+})
+
+AutoFarm:Divider()
+
+
+Toggle = AutoFarm:Toggle({
+    Title = "Anti Afk",
+    Type = "Toggle",
+    Value = false,
+    Callback = function(state)
+        if state then
+            -- Enable Anti-AFK
+            if idleConnection then
+                idleConnection:Disconnect()
+                idleConnection = nil
+            end
+
+            idleConnection = player.Idled:Connect(function()
+                VirtualUser:CaptureController()
+                VirtualUser:ClickButton2(Vector2.new())
+            end)
+
+        else
+            -- Disable Anti-AFK
+            if idleConnection then
+                idleConnection:Disconnect()
+                idleConnection = nil
+            end
+        end
+    end
+})
+
+Toggle = AutoFarm:Toggle({
+    Title = "Auto Use Electric Wheel Spin",
+    Type = "Toggle",
+    Value = false,
+    Callback = function(state)
+        autoelectricspin = state
+        if autoelectricspin then
+            task.spawn(function()
+                while autoelectricspin do
+                    if haselectricspins() then
+                        Network:InvokeServer("SpinWheel", "ElectricSpinWheel")
+                        task.wait(1) -- spin cooldown
+                    else
+                        task.wait(0.5) -- wait until spins return
+                    end 
+                end
+            end)
+        end
+    end
+})
+
+Toggle = AutoFarm:Toggle({
+    Title = "Auto Claim Rank Reward",
+    Type = "Toggle",
+    Value = false,
+    Callback = function(state)
+        autoclaimrank = state
+        if autoclaimrank then
+            task.spawn(function()
+                while autoclaimrank do
+                    task.wait(5)
+                    Network:InvokeServer("ClaimRankReward")
+                    task.wait(5)
+                end
+            end)
+        end
+    end
+})
+
+AutoFarm:Divider()
+
+Goldcraft = AutoFarm:Toggle({
+    Title = "Auto Craft Gold Pets",
+    Callback = function(state)
+        autoCraftPets = state
+        if state then
+            autoGoldCraftLoop()
+        end
+    end
+})
+
+Rainbowcraft = AutoFarm:Toggle({
+    Title = "Auto Craft Rainbow Pets",
+    Callback = function(state)
+        autoRainbowCraft = state
+        autoClaimRainbow = state
+        if state then
+            autoRainbowCraftLoop()
+            task.delay(2, function()
+                autoClaimRainbowLoop()
+            end)
+        end
+    end
+})
+
+ElectricCraft = AutoFarm:Toggle({
+    Title = "Auto Craft Electric Pets",
+    Callback = function(state)
+        autoRainbowTextCraft = state
+        if state then
+            autoRainbowTextCraftLoop()
+        end
+    end
+})
+
+AutoFarm:Divider()
+
+Autobuyrebirths = AutoFarm:Toggle({
+    Title = "Auto Buy Rebirth",
+    Callback = function(state)
+        buyingrebirth = state
+        if state then
+            autoBuyRebirthLoop()
+        end
+    end
+})
+
+Autobuydoublejumps = AutoFarm:Toggle({
+    Title = "Auto Buy Double Jumps",
+    Callback = function(state)
+        autoDoubleJump = state
+        if state then
+            autoDoubleJumpLoop()
+        end
+    end
+})
+
+AutoFarm:Toggle({
+    Title = "Auto Buy Boost's",
+    Callback = function(state)
+        autoBuyPots = state
+        if autoBuyPots then
+            startAutoBuyPots()
+        end
+    end
+})
+
+automerchanttoggle = AutoFarm:Toggle({
+	Title = "what could i be?",
+	Type = "Toggle",
+	Value = false,
+	Callback = function(state)
+		autoMerchant = state
+		if autoMerchant then
+			initializeMerchants()
+			startAutoMerchant()
+		end
+	end
+})
+
+autoenchanttoggle = AutoFarm:Toggle({
+	Title = "Auto Enchant",
+	Type = "Toggle",
+	Value = false,
+	Callback = function(state)
+		if state then
+			startAutoEnchant()
+		else
+			stopAutoEnchant()
+		end
+	end
+})
+
+Button = AutoFarm:Button({
+    Title = "Use All Codes",
+    Locked = false,
+    Callback = function()
+        for _, code in ipairs(codes) do
+            Network:InvokeServer("RedeemCode", code)
+        end
+    end
+})
+
+--------------------------------------------------
+-- STATING AUTO FARM SETTINGS
+--------------------------------------------------
+
+autoclickspeeddropdown = AutoFarmSettings:Dropdown({
+    Title = "Select A Speed",
+    Desc = "Auto Click Speed",
+    Values = {"Slow", "Fast", "Super Fast", "Insanely Fast"},
+    Value = "Slow",
+    Multi = false,
+    AllowNone = true,
+    Flag = "autoclickspeed",
+    Callback = function(option)
+        local selected = typeof(option) == "table" and option[1] or option
+        if not selected then return end
+
+        if selected == "Slow" then
+            autoclickspeed = 1
+        elseif selected == "Fast" then
+            autoclickspeed = 0.5
+        elseif selected == "Super Fast" then
+            autoclickspeed = 0.1
+        elseif selected == "Insanely Fast" then
+            autoclickspeed = 0.00000000000000001
+        end
+    end
+})
+
+rebirthamountdropdown = AutoFarmSettings:Dropdown({
+    Title = "Select An Amount Of Rebirths",
+    Values = rebirthLabels,
+    Value = "1",
+    Multi = false,
+    AllowNone = true,
+    Flag = "rebirthamount",
+    Callback = function(option)
+        local selected = typeof(option) == "table" and option[1] or option
+        if not selected then return end
+        rebirthamount = rebirthamounttable[selected]
+    end
+})
+
+eggnamedropdown = AutoFarmSettings:Dropdown({
+    Title = "Egg To Hatch",
+    Values = eggs,
+    Value = "None",
+    Multi = false,
+    AllowNone = true,
+    Flag = "amountofeggs",
+    Callback = function(option)
+        local selected = typeof(option) == "table" and option[1] or option
+        if not selected then return end
+        eggname = selected
+    end
+})
+
+egghatchamountdropdown = AutoFarmSettings:Dropdown({
+    Title = "Amount Of Eggs To Hatch",
+    Values = {"1", "2", "3", "8"}, -- STRINGS
+    Value = "3",
+    Multi = false,
+    AllowNone = true,
+    Flag = "amounttohatch",
+    Callback = function(option)
+        local selected = typeof(option) == "table" and option[1] or option
+        if not selected then return end
+        eggamount = eggamounts[selected] -- now matches table keys
+    end
+})
+
+AutoFarmSettings:Divider()
+
+AutoFarmSettings:Dropdown({
+    Title = "Gold Craft Amount",
+    Values = {"1", "2", "3", "4", "5", "6"},
+    Value = "6",
+    Multi = false,
+    AllowNone = false,
+    Flag = "goldcraft%",
+    Callback = function(option)
+        local selected = typeof(option) == "table" and option[1] or option
+        craftAmount = tonumber(selected)
+    end
+})
+rainbowcraftdropdown = AutoFarmSettings:Dropdown({
+    Title = "Rainbow Craft Amount",
+    Values = {"1","2","3","4","5"},
+    Value = "5",
+    Flag = "rainbowcraft%",
+    Callback = function(opt)
+        rainbowCraftAmount = tonumber(opt)
+    end
+})
+
+AutoFarmSettings:Dropdown({
+    Title = "Electric Craft Amount",
+    Values = {"1", "2", "3"},
+    Value = "3",
+    Flag = "electriccraft%",
+    Callback = function(option)
+        local selected = typeof(option) == "table" and option[1] or option
+        rainbowTextCraftAmount = tonumber(selected)
+    end
+})
+
+AutoFarmSettings:Divider()
+
+EnchantSection = AutoFarmSettings:Section({ 
+    Title = "Current Pet Enchant: None",
+    Box = true,
+    TextTransparency = 0.2,
+})
+
+
+EnchantDropdown = AutoFarmSettings:Dropdown({
+    Title = "Target Enchants",
+    Desc = "Select enchants to stop on",
+    Values = enchantOptions,      -- e.g. { "Luck I", "Tap I", "Secret Hunter", ... }
+    Value = {},                   -- start empty
+    Multi = true,
+    AllowNone = true,
+    Callback = function(option)
+        -- option is a table of selected enchants
+        updateTargetEnchants(option)
+
+        print("Target enchants:",
+            game:GetService("HttpService"):JSONEncode(option)
+        )
+    end
+})
+
+PetEnchantDropdown = AutoFarmSettings:Dropdown({
+    Title = "Select Pet",
+    Values = petOptions,
+    Callback = function(option)
+        local selected = typeof(option) == "table" and option[1] or option
+        selectedPetId = pets[selected]
+        updateEnchantSection()
+    end
+})
+
+--------------------------------------------------
+-- SETTINGS
+--------------------------------------------------
+
+anongui = Settings:Toggle({
+    Title = "Anonymise Gui",
+    Desc = "Will Hide Your User Data On The Gui",
+    Type = "Toggle",
+    Value = false, -- default value
+    Flag = "hiddenname",
+    Callback = function(state) 
+    hiddenname = state
+        if hiddenname == true then
+            usernamelabel:SetTitle("Username Has Been Hidden!")
+            Window.User:SetAnonymous(true)
+        elseif hiddenname == false then
+            usernamelabel:SetTitle("Username: " .. player.Name)
+            Window.User:SetAnonymous(false)
+        end
+    end
+})
+
+Button = Settings:Button({
+    Title = "Clear Console",
+    Locked = false,
+    Callback = function()
+    for i = 1, 50 do
+        print(" ")
+    end
+    print("===== CONSOLE CLEARED =====")
+    end
+})
+
+Button = Settings:Button({
+    Title = "Save Config",
+    Locked = false,
+    Callback = function()
+        myConfig:Save()
+        WindUI:Notify({
+            Title = "Spectral Hub",
+            Content = "Your Config Has Been Saved!",
+            Duration = 5, -- 3 seconds
+            Icon = "circle-alert",
+        })
+    end
+})
+
+Button = Settings:Button({
+    Title = "Load Config",
+    Locked = false,
+    Callback = function()
+        myConfig:Load()
+        WindUI:Notify({
+            Title = "Spectral Hub",
+            Content = "Your Config Has Been Loaded!",
+            Duration = 5, -- 3 seconds
+            Icon = "circle-alert",
+        })
+    end
+})
+
+--------------------------------------------------
+-- OWNER STUFF
+--------------------------------------------------
+
+Info:Select() -- Select Tab
+
+if executor == "Xeno" then
+    WindUI:Popup({
+        Title = "Unsupported Executor",
+        Content = "Your Executor Does Not Support This Script At The Moment. Therefore Some Features May Not Work",
+        Buttons = {
+            {
+                Title = "Cancel",
+                Callback = function() end,
+                Variant = "Tertiary",
+            },
+            {
+                Title = "Continue",
+                Icon = "arrow-right",
+                Callback = function() end,
+                Variant = "Primary",
+            }
+        }
+    })
+end
+
+automerchanttoggle:Lock()
+ElectricCraft:Destroy()
