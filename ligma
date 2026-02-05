@@ -54,18 +54,6 @@ local Tapsim = Window:Tab({
     Locked = false,
 })
 
-if discord == "745158368271925320" then
-    local MM2 = Window:Tab({
-    Title = "Murder Mystery 2",
-    Locked = false,
-    })
-else
-    local MM2 = Window:Tab({
-    Title = "Murder Mystery 2",
-    Locked = true,
-    })
-end
-
 local tab = Strongest:Button({
     Title = "Execute The Strongest Battlegrounds Script",
     Locked = false,
