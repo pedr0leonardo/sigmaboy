@@ -1716,7 +1716,7 @@ function RuneUI:Destroy()
     end
 end
 
-local function BuildWindow()
+function BuildWindow()
     local self = setmetatable({}, RuneUI)
     self.Pages = {}
     self.SearchEntries = {}
@@ -2313,6 +2313,16 @@ function SaveManager:GetAutoload()
 
     return nil
 end
+
+function RuneUI.new()
+    return BuildWindow()
+end
+
+RuneUI.SaveManager = SaveManager
+RuneUI.ThemePresets = ThemePresets
+RuneUI.Assets = Assets
+
+return RuneUI
 
 return UI
 
