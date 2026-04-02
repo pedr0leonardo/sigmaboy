@@ -44,6 +44,19 @@ local Theme = {
 }
 
 local ThemePresets = {
+    Default = {
+        Background = Color3.fromRGB(10, 10, 12),
+        Background2 = Color3.fromRGB(14, 14, 17),
+        Surface = Color3.fromRGB(19, 19, 23),
+        Surface2 = Color3.fromRGB(24, 24, 29),
+        Border = Color3.fromRGB(52, 52, 60),
+        BorderSoft = Color3.fromRGB(36, 36, 43),
+        Accent = Color3.fromRGB(233, 151, 175),
+        AccentDark = Color3.fromRGB(187, 110, 136),
+        Text = Color3.fromRGB(244, 244, 246),
+        SubText = Color3.fromRGB(171, 171, 181),
+        Placeholder = Color3.fromRGB(123, 123, 132),
+    },
     Dark = {
         Accent = Color3.fromHex("#18181b"),
         AccentDark = Color3.fromHex("#09090b"),
@@ -836,6 +849,274 @@ function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
         Get = function() return selected end,
         Flag = flag,
         Refresh = rebuildOptions,
+    }
+end
+
+function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, flag)
+    flag = flag or title
+    options = options or {}
+    default = default or {}
+
+    local selectedMap = {}
+    for _, v in ipairs(default) do
+        selectedMap[tostring(v)] = true
+    end
+
+    local expanded = false
+    self.OpenDropdowns = self.OpenDropdowns or {}
+
+    local holder = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 56),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+    })
+
+    local label = Create("TextLabel", {
+        Parent = holder,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 16),
+        Font = Enum.Font.Code,
+        Text = title,
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    local main = Create("TextButton", {
+        Parent = holder,
+        Position = UDim2.new(0, 0, 0, 22),
+        Size = UDim2.new(1, 0, 0, 30),
+        BackgroundColor3 = Theme.Surface2,
+        BorderSizePixel = 0,
+        Text = "",
+        AutoButtonColor = false,
+    })
+    Round(main, 8)
+    local mainStroke = Stroke(main, Theme.Border)
+
+    local valueLabel = Create("TextLabel", {
+        Parent = main,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 10, 0, 0),
+        Size = UDim2.new(1, -30, 1, 0),
+        Font = Enum.Font.Code,
+        Text = "---",
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextTruncate = Enum.TextTruncate.AtEnd,
+    })
+
+    local arrow = Create("ImageLabel", {
+        Parent = main,
+        BackgroundTransparency = 1,
+        AnchorPoint = Vector2.new(1, 0.5),
+        Position = UDim2.new(1, -10, 0.5, 0),
+        Size = UDim2.new(0, 14, 0, 14),
+        Image = Assets.Chevron,
+        ImageColor3 = Theme.SubText,
+    })
+
+    local listHolder = Create("ScrollingFrame", {
+        Parent = self.ScreenGui,
+        Position = UDim2.new(0, 0, 0, 56),
+        Size = UDim2.new(1, 0, 0, 0),
+        BackgroundColor3 = Theme.Surface,
+        BorderSizePixel = 0,
+        Visible = false,
+        ZIndex = 4,
+        CanvasSize = UDim2.new(0, 0, 0, 0),
+        ScrollBarThickness = 4,
+        ScrollingDirection = Enum.ScrollingDirection.Y,
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+    })
+    Round(listHolder, 8)
+    local listStroke = Stroke(listHolder, Theme.Border)
+    Padding(listHolder, 6, 6, 6, 6)
+    ListLayout(listHolder, 4)
+    listHolder.ClipsDescendants = true
+
+    local function getSelectedList()
+        local out = {}
+        for _, option in ipairs(options) do
+            option = tostring(option)
+            if selectedMap[option] then
+                table.insert(out, option)
+            end
+        end
+        return out
+    end
+
+    local function updateLabel()
+        local picked = getSelectedList()
+        if #picked == 0 then
+            valueLabel.Text = "---"
+        elseif #picked <= 2 then
+            valueLabel.Text = table.concat(picked, ", ")
+        else
+            valueLabel.Text = tostring(#picked) .. " selected"
+        end
+        Flags[flag] = picked
+        if callback then
+            callback(picked)
+        end
+    end
+
+    local function closeDropdown()
+        expanded = false
+        listHolder.Visible = false
+        TweenService:Create(arrow, TweenInfo.new(0.15), {
+            Rotation = 0
+        }):Play()
+    end
+    table.insert(self.OpenDropdowns, closeDropdown)
+
+    local function rebuildOptions(newOptions)
+        options = newOptions or options or {}
+
+        for _, child in ipairs(listHolder:GetChildren()) do
+            if child:IsA("TextButton") then
+                child:Destroy()
+            end
+        end
+
+        for _, option in ipairs(options) do
+            option = tostring(option)
+
+            local opt = Create("TextButton", {
+                Parent = listHolder,
+                Size = UDim2.new(1, 0, 0, 26),
+                BackgroundColor3 = Theme.Surface2,
+                BorderSizePixel = 0,
+                Text = "",
+                AutoButtonColor = false,
+                ZIndex = 5,
+            })
+            Round(opt, 6)
+            local optStroke = Stroke(opt, Theme.BorderSoft)
+
+            local check = Create("Frame", {
+                Parent = opt,
+                AnchorPoint = Vector2.new(0, 0.5),
+                Position = UDim2.new(0, 8, 0.5, 0),
+                Size = UDim2.new(0, 14, 0, 14),
+                BackgroundColor3 = selectedMap[option] and Theme.Accent or Theme.Background2,
+                BorderSizePixel = 0,
+                ZIndex = 6,
+            })
+            Round(check, 999)
+            local checkStroke = Stroke(check, selectedMap[option] and Theme.Accent or Theme.BorderSoft)
+
+            local optLabel = Create("TextLabel", {
+                Parent = opt,
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, 30, 0, 0),
+                Size = UDim2.new(1, -38, 1, 0),
+                Font = Enum.Font.Code,
+                Text = option,
+                TextColor3 = Theme.Text,
+                TextSize = 14,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                ZIndex = 6,
+            })
+
+            AddHover(opt, {BackgroundColor3 = Color3.fromRGB(31, 31, 38)}, {BackgroundColor3 = Theme.Surface2})
+
+            self:RegisterThemeObject(opt, {BackgroundColor3 = "Surface2"})
+            self:RegisterThemeObject(optStroke, {Color = "BorderSoft"})
+            self:RegisterThemeObject(optLabel, {TextColor3 = "Text"})
+
+            opt.MouseButton1Click:Connect(function()
+                selectedMap[option] = not selectedMap[option]
+
+                TweenService:Create(check, TweenInfo.new(0.12), {
+                    BackgroundColor3 = selectedMap[option] and Theme.Accent or Theme.Background2
+                }):Play()
+
+                TweenService:Create(checkStroke, TweenInfo.new(0.12), {
+                    Color = selectedMap[option] and Theme.Accent or Theme.BorderSoft
+                }):Play()
+
+                updateLabel()
+            end)
+        end
+    end
+
+    rebuildOptions(options)
+    updateLabel()
+
+    main.MouseButton1Click:Connect(function()
+        local wasExpanded = expanded
+
+        if self.OpenDropdowns then
+            for _, close in ipairs(self.OpenDropdowns) do
+                close()
+            end
+        end
+
+        expanded = not wasExpanded
+        listHolder.Visible = expanded
+
+        if expanded then
+            local absPos = main.AbsolutePosition
+            local absSize = main.AbsoluteSize
+            local maxHeight = 150
+
+            listHolder.Position = UDim2.new(
+                0, absPos.X,
+                0, absPos.Y + absSize.Y + 64
+            )
+
+            listHolder.Size = UDim2.new(
+                0, absSize.X,
+                0, maxHeight
+            )
+        end
+
+        TweenService:Create(arrow, TweenInfo.new(0.15), {
+            Rotation = expanded and 180 or 0
+        }):Play()
+    end)
+
+    self:RegisterThemeObject(label, {TextColor3 = "Text"})
+    self:RegisterThemeObject(main, {BackgroundColor3 = "Surface2"})
+    self:RegisterThemeObject(mainStroke, {Color = "Border"})
+    self:RegisterThemeObject(valueLabel, {TextColor3 = "Text"})
+    self:RegisterThemeObject(arrow, {ImageColor3 = "SubText"})
+    self:RegisterThemeObject(listHolder, {BackgroundColor3 = "Surface"})
+    self:RegisterThemeObject(listStroke, {Color = "Border"})
+
+    self.FlagObjects[flag] = {
+        Type = "MultiDropdown",
+        Set = function(values)
+            selectedMap = {}
+            for _, v in ipairs(values or {}) do
+                selectedMap[tostring(v)] = true
+            end
+            rebuildOptions(options)
+            updateLabel()
+        end
+    }
+
+    return {
+        Set = function(values)
+            selectedMap = {}
+            for _, v in ipairs(values or {}) do
+                selectedMap[tostring(v)] = true
+            end
+            rebuildOptions(options)
+            updateLabel()
+        end,
+        Get = function()
+            return getSelectedList()
+        end,
+        Flag = flag,
+        Refresh = function(newOptions)
+            options = newOptions or options
+            rebuildOptions(options)
+            updateLabel()
+        end,
     }
 end
 
@@ -1935,15 +2216,20 @@ function SaveManager:ListConfigs()
 
     local out = {}
     for _, path in ipairs(listfiles(self.Folder)) do
-        local name = path:match("([^/\]+)%.json$")
-        if name then
+        local name = path:match("([^\\/]+)$")
+        
+        if name and name ~= "autoload.txt" then -- 👈 FILTER IT HERE
+            name = name:gsub("%.json$", "")
             table.insert(out, name)
         end
     end
-    table.sort(out)
+
+    table.sort(out, function(a, b)
+        return a:lower() < b:lower()
+    end)
+
     return out
 end
-
 function SaveManager:Save(name)
     if not writefile then
         return false, "writefile unavailable"
@@ -2027,255 +2313,6 @@ function SaveManager:GetAutoload()
 
     return nil
 end
-
-local UI = BuildWindow()
-SaveManager:Init(UI)
-
-local FarmPage = UI:CreatePage("Farm", Assets.Farm)
-local CombatPage = UI:CreatePage("Combat", Assets.Combat)
-local PlayerPage = UI:CreatePage("Player", Assets.Player)
-local VisualPage = UI:CreatePage("Visuals", Assets.Visual)
-local TeleportPage = UI:CreatePage("Teleports", Assets.Teleport)
-local SettingsPage = UI:CreatePage("Settings", Assets.Settings)
-
-local FarmCard, FarmContent = UI:CreateSection(FarmPage.Left, "Auto Farm", Assets.Farm)
-local FarmCard, FarmContent = UI:CreateSection(FarmPage.Right, "Settings", Assets.Farm)
-local FarmTabsHolder, FarmTabs = UI:CreateTabBox(FarmContent, {"Harvest", "Sell"}, FarmPage)
-
-local Harvest = FarmTabs[1].Content
-local Sell = FarmTabs[2].Content
-
-UI:RegisterSearchEntry("Enable Auto Harvest", FarmPage, 1, {"harvest", "auto harvest"})
-UI:CreateToggle(Harvest, "Enable Auto Harvest", false, function(v)
-    print("Auto Harvest:", v)
-end, "Enable Auto Harvest")
-
-UI:RegisterSearchEntry("Filter Mode", FarmPage, 1)
-UI:CreateDropdown(Harvest, "Filter Mode", {"Whitelist", "Blacklist", "All"}, "Whitelist", function(v)
-    print("Filter Mode:", v)
-end, "Filter Mode")
-
-UI:RegisterSearchEntry("Harvest Stage", FarmPage, 1, {"stage"})
-UI:CreateDropdown(Harvest, "Harvest Stage", {"Seed", "Growing", "Lush", "Golden"}, "Lush", function(v)
-    print("Stage:", v)
-end, "Harvest Stage")
-
-UI:RegisterSearchEntry("Minimum Multiplier", FarmPage, 1, {"multiplier"})
-UI:CreateSlider(Harvest, "Minimum Multiplier", 1, 10, 3, function(v)
-    print("Multiplier:", v)
-end, "Minimum Multiplier")
-
-UI:RegisterSearchEntry("Plants", FarmPage, 1, {"harvest plants"})
-UI:CreateDropdown(Harvest, "Plants", {"---", "Tomato", "Berry", "Cactus", "Lotus"}, "---", function(v)
-    print("Plants:", v)
-end, "Harvest Plants")
-
-UI:RegisterSearchEntry("Mutations", FarmPage, 1, {"harvest mutations"})
-UI:CreateDropdown(Harvest, "Mutations", {"---", "Wet", "Gold", "Frozen", "Shadow"}, "---", function(v)
-    print("Mutations:", v)
-end, "Harvest Mutations")
-
-UI:RegisterSearchEntry("Enable Auto Sell", FarmPage, 2, {"sell", "auto sell"})
-UI:CreateToggle(Sell, "Enable Auto Sell", false, function(v)
-    print("Auto Sell:", v)
-end, "Enable Auto Sell")
-
-UI:RegisterSearchEntry("Sell Mode", FarmPage, 2, {"mode"})
-UI:CreateDropdown(Sell, "Mode", {"Specific", "Best Value", "Everything"}, "Specific", function(v)
-    print("Sell Mode:", v)
-end, "Sell Mode")
-
-UI:RegisterSearchEntry("Skip Favorited", FarmPage, 2)
-UI:CreateToggle(Sell, "Skip Favorited", true, function(v)
-    print("Skip Favorited:", v)
-end, "Skip Favorited")
-
-UI:RegisterSearchEntry("Rarities", FarmPage, 2, {"sell rarities"})
-UI:CreateDropdown(Sell, "Rarities", {"---", "Common", "Rare", "Epic", "Legendary"}, "---", function(v)
-    print("Rarity:", v)
-end, "Sell Rarities")
-
-UI:RegisterSearchEntry("Sell Plants", FarmPage, 2, {"plants sell"})
-UI:CreateDropdown(Sell, "Plants", {"---", "Tomato", "Berry", "Cactus", "Lotus"}, "---", function(v)
-    print("Sell Plants:", v)
-end, "Sell Plants")
-
-UI:RegisterSearchEntry("Sell Now", FarmPage, 2)
-UI:CreateButton(Sell, "Sell Now", function()
-    UI:Notify("Rune Hub", "Sell action triggered.", 2.5)
-end)
-
-local AimCard, Aim = UI:CreateSection(CombatPage.Left, "Combat", Assets.Combat)
-UI:RegisterSearchEntry("Auto Attack", CombatPage, nil, {"combat"})
-UI:CreateToggle(Aim, "Auto Attack", false, function(v)
-    print("Auto Attack:", v)
-end, "Auto Attack")
-
-UI:RegisterSearchEntry("Auto Skills", CombatPage, nil, {"skills"})
-UI:CreateToggle(Aim, "Auto Skills", false, function(v)
-    print("Auto Skills:", v)
-end, "Auto Skills")
-
-UI:RegisterSearchEntry("Target Priority", CombatPage, nil, {"priority"})
-UI:CreateDropdown(Aim, "Target Priority", {"Nearest", "Boss", "Lowest HP"}, "Nearest", function(v)
-    print("Target Priority:", v)
-end, "Target Priority")
-
-UI:RegisterSearchEntry("Distance From Mob", CombatPage, nil, {"distance"})
-UI:CreateSlider(Aim, "Distance From Mob", 0, 10, 3, function(v)
-    print("Distance From Mob:", v)
-end, "Distance From Mob")
-
-local MiscCard, Misc = UI:CreateSection(SettingsPage.Left, "Interface", Assets.Settings)
-UI:RegisterSearchEntry("Show Notification", SettingsPage, nil, {"notification"})
-UI:CreateButton(Misc, "Show Notification", function()
-    UI:Notify("Rune Hub", "Custom Linoria-style UI loaded successfully.", 3)
-end)
-
-UI:RegisterSearchEntry("Unload UI", SettingsPage, nil, {"close", "destroy"})
-UI:CreateButton(Misc, "Unload UI", function()
-    UI:Destroy()
-end)
-
-local ConfigCard, Configs = UI:CreateSection(SettingsPage.Right, "Configs", Assets.Settings)
-local ThemeCard, Themes = UI:CreateSection(SettingsPage.Right, "Theme", Assets.Settings)
-
-UI:RegisterSearchEntry("Theme Preset", SettingsPage, nil, {"theme", "accent", "color"})
-UI:CreateDropdown(Themes, "Theme Preset", {"Dark", "Light", "Rose", "Plant", "Red", "Indigo", "Sky", "Violet", "Amber", "Emerald", "Midnight", "Crimson", "Monokai Pro", "Cotton Candy", "Mellowsi", "Rainbow"}, "Dark", function(v)
-    UI:ApplyTheme(v)
-    UI:Notify("Theme", "Applied preset: " .. tostring(v), 2)
-end, "Theme Preset")
-
-UI:RegisterSearchEntry("Config Name", SettingsPage, nil, {"config"})
-UI:CreateTextbox(Configs, "Config Name", "Enter config name", function(text)
-    print("Config Name:", text)
-end, "Config Name")
-
-local SelectedConfig = ""
-local ConfigList = UI:CreateDropdown(Configs, "Config List", {"None"}, "None", function(v)
-    SelectedConfig = v == "None" and "" or v
-end, "Config List")
-
-local function RefreshConfigs()
-    local list = SaveManager:ListConfigs()
-    local options = #list > 0 and list or {"None"}
-    if ConfigList.Refresh then
-        ConfigList.Refresh(options)
-    end
-    ConfigList.Set(options[1])
-    SelectedConfig = options[1] == "None" and "" or options[1]
-end
-
-UI:CreateButton(Configs, "Save Config", function()
-    local name = Flags["Config Name"]
-    if name and name ~= "" then
-        local existing = SaveManager:ListConfigs()
-        for _, cfg in ipairs(existing) do
-            if cfg == name then
-                UI:Notify("Configs", "Config already exists. Use Overwrite Save.", 2)
-                return
-            end
-        end
-        local ok, err = SaveManager:Save(name)
-        if ok then
-            RefreshConfigs()
-            UI:Notify("Configs", "Saved: " .. tostring(name), 2)
-        else
-            UI:Notify("Configs", "Save failed: " .. tostring(err), 2)
-        end
-    else
-        UI:Notify("Configs", "Enter a config name", 2)
-    end
-end)
-
-UI:CreateButton(Configs, "Overwrite Save", function()
-    local name = Flags["Config Name"] or SelectedConfig
-    if name and name ~= "" then
-        local ok, err = SaveManager:Save(name)
-        if ok then
-            RefreshConfigs()
-            ConfigList.Set(name)
-            SelectedConfig = name
-            UI:Notify("Configs", "Overwritten: " .. tostring(name), 2)
-        else
-            UI:Notify("Configs", "Overwrite failed: " .. tostring(err), 2)
-        end
-    else
-        UI:Notify("Configs", "Enter or select a config first", 2)
-    end
-end)
-
-UI:CreateButton(Configs, "Load Config", function()
-    if SelectedConfig ~= "" then
-        local ok, err = SaveManager:Load(SelectedConfig)
-        if ok then
-            UI:Notify("Configs", "Loaded: " .. tostring(SelectedConfig), 2)
-        else
-            UI:Notify("Configs", "Load failed: " .. tostring(err), 2)
-        end
-    else
-        UI:Notify("Configs", "Select a config first", 2)
-    end
-end)
-
-UI:CreateButton(Configs, "Delete Config", function()
-    if SelectedConfig ~= "" then
-        local ok, err = SaveManager:Delete(SelectedConfig)
-        if ok then
-            RefreshConfigs()
-            UI:Notify("Configs", "Deleted: " .. tostring(SelectedConfig), 2)
-        else
-            UI:Notify("Configs", "Delete failed: " .. tostring(err), 2)
-        end
-    else
-        UI:Notify("Configs", "Select a config first", 2)
-    end
-end)
-
-UI:CreateButton(Configs, "Refresh Configs", function()
-    RefreshConfigs()
-    UI:Notify("Configs", "Config list refreshed.", 2)
-end)
-
-UI:CreateButton(Configs, "Set Autoload", function()
-    local name = SelectedConfig ~= "" and SelectedConfig or Flags["Config Name"]
-    if name and name ~= "" then
-        local ok, err = SaveManager:SetAutoload(name)
-        if ok then
-            UI:Notify("Configs", "Autoload config is now: " .. tostring(name), 2)
-        else
-            UI:Notify("Configs", "Autoload failed: " .. tostring(err), 2)
-        end
-    else
-        UI:Notify("Configs", "Select or enter a config first", 2)
-    end
-end)
-
-UI:CreateButton(Configs, "Clear Autoload", function()
-    local ok, err = SaveManager:SetAutoload("")
-    if ok then
-        UI:Notify("Configs", "Autoload cleared.", 2)
-    else
-        UI:Notify("Configs", "Clear failed: " .. tostring(err), 2)
-    end
-end)
-
-RefreshConfigs()
-
-local autoloadConfig = SaveManager:GetAutoload()
-if autoloadConfig and autoloadConfig ~= "" then
-    task.defer(function()
-        local ok = SaveManager:Load(autoloadConfig)
-        if ok then
-            RefreshConfigs()
-            ConfigList.Set(autoloadConfig)
-            SelectedConfig = autoloadConfig
-            UI:Notify("Configs", "Autoloaded: " .. tostring(autoloadConfig), 2)
-        end
-    end)
-end
-
-UI:Notify("Rune Hub", "Custom UI loaded.", 2.5)
 
 return UI
 
