@@ -701,7 +701,6 @@ function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
     })
 
     local main = Create("TextButton", {
-        Name = "asdasdasdasdasdasdasasdasdasdasdasd",
         Parent = holder,
         Position = UDim2.new(0, 0, 0, 22),
         Size = UDim2.new(1, 0, 0, 30),
@@ -1748,6 +1747,7 @@ function BuildWindow()
     self.ScreenGui = gui
 
     local root = Create("Frame", {
+        Name = "asdasd"
         Parent = gui,
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.new(0.5, 0, 0.5, 0),
