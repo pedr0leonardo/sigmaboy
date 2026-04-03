@@ -1747,7 +1747,7 @@ function BuildWindow()
     self.ScreenGui = gui
 
     local root = Create("Frame", {
-        Name = "asdasd"
+        Name = "asdasd",
         Parent = gui,
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.new(0.5, 0, 0.5, 0),
