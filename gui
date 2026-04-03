@@ -1388,41 +1388,47 @@ function RuneUI:AddBreak(parent, text)
     return holder
 end
 
-function createInfoLabel(parent, text)
-    local Frame = Instance.new("Frame")
-    Frame.Name = "InfoLabel"
-    Frame.Size = UDim2.new(1, 0, 0, 38)
-    Frame.BackgroundColor3 = Color3.fromRGB(54, 43, 89)
-    Frame.BorderSizePixel = 0
-    Frame.Parent = parent
+function RuneUI:CreateInfoLabel(parent, text)
+    local frame = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 38),
+        BackgroundColor3 = Theme.Surface2,
+        BorderSizePixel = 0,
+    })
+    Round(frame, 10)
 
-    local Corner = Instance.new("UICorner")
-    Corner.CornerRadius = UDim.new(0, 10)
-    Corner.Parent = Frame
+    local frameStroke = Stroke(frame, Theme.BorderSoft)
+    Padding(frame, 12, 12, 0, 0)
 
-    local Padding = Instance.new("UIPadding")
-    Padding.PaddingLeft = UDim.new(0, 14)
-    Padding.PaddingRight = UDim.new(0, 14)
-    Padding.Parent = Frame
+    local label = Create("TextLabel", {
+        Parent = frame,
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Font = Enum.Font.Code,
+        Text = text or "Info",
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
 
-    local Label = Instance.new("TextLabel")
-    Label.Name = "Text"
-    Label.Size = UDim2.new(1, 0, 1, 0)
-    Label.BackgroundTransparency = 1
-    Label.Text = text or "Example Text"
-    Label.TextColor3 = Color3.fromRGB(235, 235, 235)
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    Label.Font = Enum.Font.GothamSemibold
-    Label.TextSize = 16
-    Label.Parent = Frame
+    self:RegisterThemeObject(frame, {BackgroundColor3 = "Surface2"})
+    self:RegisterThemeObject(frameStroke, {Color = "BorderSoft"})
+    self:RegisterThemeObject(label, {TextColor3 = "Text"})
 
-    return Frame, Label
-end
+    local object = {}
 
-local function setInfoText(label, newText)
-    if label then
-        label.Text = newText
+    function object:Set(newText)
+        label.Text = tostring(newText or "")
     end
+
+    function object:Get()
+        return label.Text
+    end
+
+    object.Frame = frame
+    object.Label = label
+
+    return object
 end
 
 function RuneUI:CreateTabBox(parent, tabNames, pageData)
