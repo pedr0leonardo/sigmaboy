@@ -1454,6 +1454,7 @@ end
 
 function RuneUI:CreateTabBox(parent, tabNames, pageData)
     local currentTab = 1
+    tabNames = tabNames or {"Tab 1", "Tab 2"}
 
     local holder = Create("Frame", {
         Parent = parent,
@@ -1484,7 +1485,9 @@ function RuneUI:CreateTabBox(parent, tabNames, pageData)
         Size = UDim2.new(1, 0, 0, 28),
         BackgroundTransparency = 1,
     })
-    ListLayout(tabBar, 6, true)
+
+    local tabLayout = ListLayout(tabBar, 6, true)
+    tabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
 
     local divider = Create("Frame", {
         Parent = body,
@@ -1504,6 +1507,18 @@ function RuneUI:CreateTabBox(parent, tabNames, pageData)
 
     local tabs = {}
 
+    local function updateTabSizes()
+        local count = math.max(#tabNames, 1)
+        local spacing = tabLayout.Padding.Offset
+        local totalSpacing = spacing * (count - 1)
+        local widthScale = 1 / count
+        local widthOffset = -totalSpacing / count
+
+        for _, data in ipairs(tabs) do
+            data.Button.Size = UDim2.new(widthScale, widthOffset, 1, 0)
+        end
+    end
+
     local function selectTab(index)
         if self.OpenDropdowns then
             for _, close in ipairs(self.OpenDropdowns) do
@@ -1522,10 +1537,10 @@ function RuneUI:CreateTabBox(parent, tabNames, pageData)
         end
     end
 
-    for i, name in ipairs(tabNames or {"Tab 1", "Tab 2"}) do
+    for i, name in ipairs(tabNames) do
         local btn = Create("TextButton", {
             Parent = tabBar,
-            Size = UDim2.new(0, 90, 1, 0),
+            Size = UDim2.new(0.5, -3, 1, 0),
             BackgroundColor3 = Theme.Surface2,
             BorderSizePixel = 0,
             Text = tostring(name),
@@ -1533,6 +1548,7 @@ function RuneUI:CreateTabBox(parent, tabNames, pageData)
             TextColor3 = Theme.SubText,
             TextSize = 14,
             AutoButtonColor = false,
+            TextTruncate = Enum.TextTruncate.AtEnd,
         })
         Round(btn, 6)
         local st = Stroke(btn, Theme.BorderSoft)
@@ -1575,6 +1591,8 @@ function RuneUI:CreateTabBox(parent, tabNames, pageData)
         end)
     end
 
+    updateTabSizes()
+
     if #tabs > 0 then
         selectTab(1)
     end
@@ -1589,6 +1607,7 @@ function RuneUI:CreateTabBox(parent, tabNames, pageData)
         Body = body,
         ContentWrap = contentWrap,
         Refresh = function()
+            updateTabSizes()
             selectTab(currentTab)
         end,
     }
