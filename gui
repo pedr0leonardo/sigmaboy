@@ -1339,7 +1339,14 @@ function RuneUI:AddBreak(parent, text)
         Position = UDim2.new(0, 0, 0.5, 0),
         Size = UDim2.new(0.4, -6, 0, 1),
         BackgroundColor3 = Theme.Border,
-        BorderSizePixel = 1,
+        BorderSizePixel = 0,
+    })
+
+    local stroke = Create("UIStroke", {
+        Parent = leftLine,
+        Color = Theme.Accent,
+        Thickness = 1,
+        Transparency = 0.5
     })
 
     local title = Create("TextLabel", {
@@ -1360,10 +1367,17 @@ function RuneUI:AddBreak(parent, text)
         Parent = holder,
         Name = "RightLine",
         AnchorPoint = Vector2.new(1, 0.5),
-        Position = UDim2.new(0.4, 0, 0.5, 0),
-        Size = UDim2.new(1, -6, 0, 1),
+        Position = UDim2.new(1, 0, 0.5, 0),
+        Size = UDim2.new(0.4, -6, 0, 1),
         BackgroundColor3 = Theme.Border,
-        BorderSizePixel = 1,
+        BorderSizePixel = 0,
+    })
+
+    local stroke = Create("UIStroke", {
+        Parent = rightLine,
+        Color = Theme.Accent,
+        Thickness = 1,
+        Transparency = 0.5
     })
 
     -- theme support
