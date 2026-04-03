@@ -1250,6 +1250,7 @@ end
 
 function RuneUI:CreateSection(parent, title, icon)
     local holder = Create("Frame", {
+        Name = "ASDASDASDASDASD",
         Parent = parent,
         Size = UDim2.new(1, 0, 0, 0),
         AutomaticSize = Enum.AutomaticSize.Y,
