@@ -1388,6 +1388,43 @@ function RuneUI:AddBreak(parent, text)
     return holder
 end
 
+local function createInfoLabel(parent, text)
+    local Frame = Instance.new("Frame")
+    Frame.Name = "InfoLabel"
+    Frame.Size = UDim2.new(1, 0, 0, 38)
+    Frame.BackgroundColor3 = Color3.fromRGB(54, 43, 89)
+    Frame.BorderSizePixel = 0
+    Frame.Parent = parent
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 10)
+    Corner.Parent = Frame
+
+    local Padding = Instance.new("UIPadding")
+    Padding.PaddingLeft = UDim.new(0, 14)
+    Padding.PaddingRight = UDim.new(0, 14)
+    Padding.Parent = Frame
+
+    local Label = Instance.new("TextLabel")
+    Label.Name = "Text"
+    Label.Size = UDim2.new(1, 0, 1, 0)
+    Label.BackgroundTransparency = 1
+    Label.Text = text or "Example Text"
+    Label.TextColor3 = Color3.fromRGB(235, 235, 235)
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.Font = Enum.Font.GothamSemibold
+    Label.TextSize = 16
+    Label.Parent = Frame
+
+    return Frame, Label
+end
+
+local function setInfoText(label, newText)
+    if label then
+        label.Text = newText
+    end
+end
+
 function RuneUI:CreateTabBox(parent, tabNames, pageData)
     local currentTab = 1
 
