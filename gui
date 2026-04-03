@@ -2376,16 +2376,7 @@ function SaveManager:GetAutoload()
 end
 
 function RuneUI.new()
-    local self = setmetatable({}, RuneUI)
-
-    self.ThemeObjects = {}
-    self.FlagObjects = {}
-    self.Pages = {}
-    self.OpenDropdowns = {}
-
-    -- your existing setup...
-
-    return self
+    return BuildWindow()
 end
 
 RuneUI.SaveManager = SaveManager
