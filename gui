@@ -1468,7 +1468,7 @@ end
 
 function RuneUI:CreatePage(name, icon)
     local pageButton = Create("TextButton", {
-        Name = Sidebarasdasdasd
+        Name = Sidebarasdasdasd,
         Parent = self.SidebarList,
         Size = UDim2.new(1, 0, 0, 42),
         BackgroundColor3 = Theme.Background2,
