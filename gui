@@ -677,7 +677,7 @@ end
 function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
     flag = flag or title
     options = options or {}
-    local selected = default or (options[1] or "---")
+    local selected = default or (options[1] or "-----")
     local expanded = false
 
     self.OpenDropdowns = self.OpenDropdowns or {}
@@ -910,7 +910,7 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
         Position = UDim2.new(0, 10, 0, 0),
         Size = UDim2.new(1, -30, 1, 0),
         Font = Enum.Font.Code,
-        Text = "---",
+        Text = "-----",
         TextColor3 = Theme.Text,
         TextSize = 15,
         TextXAlignment = Enum.TextXAlignment.Left,
@@ -960,7 +960,7 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
     local function updateLabel()
         local picked = getSelectedList()
         if #picked == 0 then
-            valueLabel.Text = "---"
+            valueLabel.Text = "-----"
         elseif #picked <= 2 then
             valueLabel.Text = table.concat(picked, ", ")
         else
