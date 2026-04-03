@@ -284,9 +284,16 @@ local Assets = {
 
 local function Create(className, props)
     local obj = Instance.new(className)
-    for k, v in pairs(props or {}) do
+
+    props = props or {}
+
+    -- ✅ set name automatically if not provided
+    obj.Name = props.Name or className
+
+    for k, v in pairs(props) do
         obj[k] = v
     end
+
     return obj
 end
 
