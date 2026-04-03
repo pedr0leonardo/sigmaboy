@@ -269,6 +269,7 @@ local ThemePresets = {
 
 local Assets = {
     Logo = "rbxassetid://87227163199096",
+    Home = "rbxassetid://121347041469488",
     Search = "rbxassetid://6031154871",
     Move = "rbxassetid://6031280882",
     Chevron = "rbxassetid://6031091004",
