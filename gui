@@ -1345,7 +1345,7 @@ function RuneUI:AddBreak(parent, text)
     local stroke = Create("UIStroke", {
         Parent = leftLine,
         Color = Theme.Accent,
-        Thickness = 1,
+        Thickness = 0.6,
         Transparency = 0.5
     })
 
@@ -1376,7 +1376,7 @@ function RuneUI:AddBreak(parent, text)
     local stroke = Create("UIStroke", {
         Parent = rightLine,
         Color = Theme.Accent,
-        Thickness = 1,
+        Thickness = 0.6,
         Transparency = 0.5
     })
 
