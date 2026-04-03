@@ -1324,6 +1324,56 @@ function RuneUI:CreateSection(parent, title, icon)
     return holder, content
 end
 
+function RuneUI:AddBreak(parent, text)
+    local holder = Create("Frame", {
+        Parent = parent,
+        Name = "Break_" .. tostring(text or "Divider"),
+        Size = UDim2.new(1, 0, 0, 20),
+        BackgroundTransparency = 1,
+    })
+
+    local leftLine = Create("Frame", {
+        Parent = holder,
+        Name = "LeftLine",
+        AnchorPoint = Vector2.new(0, 0.5),
+        Position = UDim2.new(0, 0, 0.5, 0),
+        Size = UDim2.new(0.4, -6, 0, 1),
+        BackgroundColor3 = Theme.Border,
+        BorderSizePixel = 0,
+    })
+
+    local title = Create("TextLabel", {
+        Parent = holder,
+        Name = "BreakText",
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(0, 120, 1, 0),
+        BackgroundTransparency = 1,
+        Font = Enum.Font.Code,
+        Text = text or "",
+        TextColor3 = Theme.Accent,
+        TextSize = 14,
+        TextXAlignment = Enum.TextXAlignment.Center,
+    })
+
+    local rightLine = Create("Frame", {
+        Parent = holder,
+        Name = "RightLine",
+        AnchorPoint = Vector2.new(1, 0.5),
+        Position = UDim2.new(1, 0, 0.5, 0),
+        Size = UDim2.new(0.4, -6, 0, 1),
+        BackgroundColor3 = Theme.Border,
+        BorderSizePixel = 0,
+    })
+
+    -- theme support
+    self:RegisterThemeObject(leftLine, {BackgroundColor3 = "Border"})
+    self:RegisterThemeObject(rightLine, {BackgroundColor3 = "Border"})
+    self:RegisterThemeObject(title, {TextColor3 = "Accent"})
+
+    return holder
+end
+
 function RuneUI:CreateTabBox(parent, tabNames, pageData)
     local currentTab = 1
 
