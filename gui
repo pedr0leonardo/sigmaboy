@@ -1388,7 +1388,7 @@ function RuneUI:AddBreak(parent, text)
     return holder
 end
 
-local function createInfoLabel(parent, text)
+function createInfoLabel(parent, text)
     local Frame = Instance.new("Frame")
     Frame.Name = "InfoLabel"
     Frame.Size = UDim2.new(1, 0, 0, 38)
