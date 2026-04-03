@@ -1129,10 +1129,11 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
     }
 end
 
-function RuneUI:CreateSlider(parent, title, min, max, default, callback, flag)
+function RuneUI:CreateSlider(parent, title, min, max, default, callback, flag, step)
     flag = flag or title
     min = min or 0
     max = max or 100
+    step = step or 1
     local value = default or min
 
     local holder = Create("Frame", {
@@ -1195,14 +1196,33 @@ function RuneUI:CreateSlider(parent, title, min, max, default, callback, flag)
 
     local dragging = false
 
+    local function snapToStep(v)
+        if step <= 0 then
+            return math.clamp(v, min, max)
+        end
+
+        v = math.clamp(v, min, max)
+        v = min + math.floor(((v - min) / step) + 0.5) * step
+
+        if typeof(step) == "number" and step < 1 then
+            local decimals = tostring(step):match("%.(.+)")
+            local places = decimals and #decimals or 0
+            v = tonumber(string.format("%." .. places .. "f", v))
+        end
+
+        return math.clamp(v, min, max)
+    end
+
     local function setValue(v)
-        v = math.clamp(tonumber(v) or min, min, max)
+        v = snapToStep(tonumber(v) or min)
         value = v
+
         local pct = (value - min) / (max - min)
         fill.Size = UDim2.new(pct, 0, 1, 0)
         knob.Position = UDim2.new(pct, 0, 0.5, 0)
         valueLabel.Text = tostring(value)
         Flags[flag] = value
+
         if callback then
             callback(value)
         end
@@ -1210,8 +1230,8 @@ function RuneUI:CreateSlider(parent, title, min, max, default, callback, flag)
 
     local function setFromX(x)
         local pct = math.clamp((x - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1)
-        local v = math.floor((min + (max - min) * pct) + 0.5)
-        setValue(v)
+        local rawValue = min + (max - min) * pct
+        setValue(rawValue)
     end
 
     bar.InputBegan:Connect(function(input)
@@ -1233,7 +1253,8 @@ function RuneUI:CreateSlider(parent, title, min, max, default, callback, flag)
         end
     end)
 
-    Flags[flag] = value
+    setValue(value)
+
     self:RegisterThemeObject(label, {TextColor3 = "Text"})
     self:RegisterThemeObject(valueLabel, {TextColor3 = "SubText"})
     self:RegisterThemeObject(bar, {BackgroundColor3 = "Surface2"})
