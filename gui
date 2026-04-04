@@ -607,6 +607,110 @@ function RuneUI:CreateButton(parent, title, callback)
     return btn
 end
 
+function RuneUI:CreateKeybind(parent, title, defaultKey, callback, flag)
+    flag = flag or title
+    local currentKey = defaultKey or Enum.KeyCode.RightControl
+    local listening = false
+
+    local row = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 32),
+        BackgroundTransparency = 1,
+    })
+
+    local label = Create("TextLabel", {
+        Parent = row,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, -110, 1, 0),
+        Font = Enum.Font.Code,
+        Text = title,
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    local button = Create("TextButton", {
+        Parent = row,
+        AnchorPoint = Vector2.new(1, 0.5),
+        Position = UDim2.new(1, 0, 0.5, 0),
+        Size = UDim2.new(0, 100, 0, 28),
+        BackgroundColor3 = Theme.Surface2,
+        BorderSizePixel = 0,
+        Text = currentKey.Name,
+        Font = Enum.Font.Code,
+        TextColor3 = Theme.Text,
+        TextSize = 14,
+        AutoButtonColor = false,
+    })
+    Round(button, 8)
+    local buttonStroke = Stroke(button, Theme.Border)
+
+    self:RegisterThemeObject(label, {TextColor3 = "Text"})
+    self:RegisterThemeObject(button, {BackgroundColor3 = "Surface2", TextColor3 = "Text"})
+    self:RegisterThemeObject(buttonStroke, {Color = "Border"})
+
+    local function setKey(newKey)
+        if typeof(newKey) == "EnumItem" and newKey.EnumType == Enum.KeyCode then
+            currentKey = newKey
+            button.Text = currentKey.Name
+            Flags[flag] = currentKey.Name
+
+            if callback then
+                callback(currentKey)
+            end
+        end
+    end
+
+    button.MouseButton1Click:Connect(function()
+        if listening then
+            return
+        end
+
+        listening = true
+        button.Text = "..."
+    end)
+
+    local inputConn
+    inputConn = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then
+            return
+        end
+
+        if listening then
+            if input.UserInputType == Enum.UserInputType.Keyboard then
+                listening = false
+                setKey(input.KeyCode)
+            end
+            return
+        end
+
+        if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == currentKey then
+            if callback then
+                callback(currentKey, true)
+            end
+        end
+    end)
+
+    Flags[flag] = currentKey.Name
+    self.FlagObjects[flag] = {
+        Type = "Keybind",
+        Set = setKey,
+        Get = function()
+            return currentKey
+        end,
+        Connection = inputConn,
+    }
+
+    return {
+        Set = setKey,
+        Get = function()
+            return currentKey
+        end,
+        Flag = flag,
+        Button = button,
+    }
+end
+
 function RuneUI:CreateTextbox(parent, title, placeholder, callback, flag)
     flag = flag or title
 
