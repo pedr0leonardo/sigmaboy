@@ -2220,17 +2220,6 @@ local function showUi()
     }):Play()
 end
 
-window.ToggleUi = function()
-    if uiOpen then
-        hideUi()
-    else
-        showUi()
-    end
-end
-
-window.HideUi = hideUi
-window.ShowUi = showUi
-
 toggleCircle.MouseButton1Click:Connect(function()
     if uiOpen then
         hideUi()
@@ -2238,6 +2227,17 @@ toggleCircle.MouseButton1Click:Connect(function()
         showUi()
     end
 end)
+
+self.ToggleUi = function()
+    if uiOpen then
+        hideUi()
+    else
+        showUi()
+    end
+end
+
+self.HideUi = hideUi
+self.ShowUi = showUi
 
     local sidebar = Create("Frame", {
         Parent = root,
