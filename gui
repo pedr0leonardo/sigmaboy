@@ -711,44 +711,70 @@ function RuneUI:CreateKeybind(parent, title, defaultKey, callback, flag)
     }
 end
 
-function RuneUI:CreateInfoLabel(parent, text)
-    local frame = Create("Frame", {
-        Parent = parent,
-        Size = UDim2.new(1, 0, 0, 38),
-        BackgroundColor3 = Theme.Surface2,
-        BorderSizePixel = 0,
-    })
-    Round(frame, 10)
+function RuneUI:CreateTextbox(parent, title, placeholder, callback, flag)
+    flag = flag or title
 
-    local frameStroke = Stroke(frame, Theme.BorderSoft)
-    Padding(frame, 12, 12, 0, 0)
+    local holder = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 56),
+        BackgroundTransparency = 1,
+    })
 
     local label = Create("TextLabel", {
-        Parent = frame,
-        Size = UDim2.new(1, 0, 1, 0),
+        Parent = holder,
         BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 16),
         Font = Enum.Font.Code,
-        Text = tostring(text or ""),
+        Text = title,
         TextColor3 = Theme.Text,
         TextSize = 15,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
-    self:RegisterThemeObject(frame, {BackgroundColor3 = "Surface2"})
-    self:RegisterThemeObject(frameStroke, {Color = "BorderSoft"})
-    self:RegisterThemeObject(label, {TextColor3 = "Text"})
+    local box = Create("TextBox", {
+        Parent = holder,
+        Position = UDim2.new(0, 0, 0, 22),
+        Size = UDim2.new(1, 0, 0, 30),
+        BackgroundColor3 = Theme.Surface2,
+        BorderSizePixel = 0,
+        PlaceholderText = placeholder or "",
+        Font = Enum.Font.Code,
+        Text = "",
+        TextColor3 = Theme.Text,
+        PlaceholderColor3 = Theme.Placeholder,
+        TextSize = 15,
+        ClearTextOnFocus = false,
+    })
+    Round(box, 8)
+    local st = Stroke(box, Theme.Border)
+
+    box:GetPropertyChangedSignal("Text"):Connect(function()
+        Flags[flag] = box.Text
+    end)
 
     local function setText(v)
-        label.Text = tostring(v or "")
+        box.Text = tostring(v or "")
+        Flags[flag] = box.Text
     end
+
+    box.FocusLost:Connect(function()
+        Flags[flag] = box.Text
+        if callback then
+            callback(box.Text)
+        end
+    end)
+
+    Flags[flag] = box.Text
+    self:RegisterThemeObject(label, {TextColor3 = "Text"})
+    self:RegisterThemeObject(box, {BackgroundColor3 = "Surface2", TextColor3 = "Text", PlaceholderColor3 = "Placeholder"})
+    self:RegisterThemeObject(st, {Color = "Border"})
+    self.FlagObjects[flag] = {Type = "Textbox", Set = setText}
 
     return {
         Set = setText,
-        Get = function()
-            return label.Text
-        end,
-        Object = label,
-        Frame = frame,
+        Get = function() return box.Text end,
+        Flag = flag,
+        Object = box,
     }
 end
 
@@ -1504,7 +1530,7 @@ function RuneUI:CreateInfoLabel(parent, text)
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
         Font = Enum.Font.Code,
-        Text = text or "Info",
+        Text = tostring(text or ""),
         TextColor3 = Theme.Text,
         TextSize = 15,
         TextXAlignment = Enum.TextXAlignment.Left,
@@ -1514,20 +1540,18 @@ function RuneUI:CreateInfoLabel(parent, text)
     self:RegisterThemeObject(frameStroke, {Color = "BorderSoft"})
     self:RegisterThemeObject(label, {TextColor3 = "Text"})
 
-    local object = {}
-
-    function object:Set(newText)
-        label.Text = tostring(newText or "")
+    local function setText(v)
+        label.Text = tostring(v or "")
     end
 
-    function object:Get()
-        return label.Text
-    end
-
-    object.Frame = frame
-    object.Label = label
-
-    return object
+    return {
+        Set = setText,
+        Get = function()
+            return label.Text
+        end,
+        Object = label,
+        Frame = frame,
+    }
 end
 
 function RuneUI:CreateTabBox(parent, tabNames, pageData)
