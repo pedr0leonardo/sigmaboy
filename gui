@@ -288,6 +288,8 @@ local Assets = {
     Teleport = "rbxassetid://6035190846",
     Settings = "rbxassetid://6031280882",
     Settings2 = "rbxassetid://80758916183665",
+    globe = "rbxassetid://114238209622913",
+    key = "rbxassetid://83619031955390",
 }
 
 local function Create(className, props)
