@@ -711,70 +711,44 @@ function RuneUI:CreateKeybind(parent, title, defaultKey, callback, flag)
     }
 end
 
-function RuneUI:CreateTextbox(parent, title, placeholder, callback, flag)
-    flag = flag or title
-
-    local holder = Create("Frame", {
+function RuneUI:CreateInfoLabel(parent, text)
+    local frame = Create("Frame", {
         Parent = parent,
-        Size = UDim2.new(1, 0, 0, 56),
-        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 38),
+        BackgroundColor3 = Theme.Surface2,
+        BorderSizePixel = 0,
     })
+    Round(frame, 10)
+
+    local frameStroke = Stroke(frame, Theme.BorderSoft)
+    Padding(frame, 12, 12, 0, 0)
 
     local label = Create("TextLabel", {
-        Parent = holder,
+        Parent = frame,
+        Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
-        Size = UDim2.new(1, 0, 0, 16),
         Font = Enum.Font.Code,
-        Text = title,
+        Text = tostring(text or ""),
         TextColor3 = Theme.Text,
         TextSize = 15,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
-    local box = Create("TextBox", {
-        Parent = holder,
-        Position = UDim2.new(0, 0, 0, 22),
-        Size = UDim2.new(1, 0, 0, 30),
-        BackgroundColor3 = Theme.Surface2,
-        BorderSizePixel = 0,
-        PlaceholderText = placeholder or "",
-        Font = Enum.Font.Code,
-        Text = "",
-        TextColor3 = Theme.Text,
-        PlaceholderColor3 = Theme.Placeholder,
-        TextSize = 15,
-        ClearTextOnFocus = false,
-    })
-    Round(box, 8)
-    local st = Stroke(box, Theme.Border)
-
-    box:GetPropertyChangedSignal("Text"):Connect(function()
-        Flags[flag] = box.Text
-    end)
+    self:RegisterThemeObject(frame, {BackgroundColor3 = "Surface2"})
+    self:RegisterThemeObject(frameStroke, {Color = "BorderSoft"})
+    self:RegisterThemeObject(label, {TextColor3 = "Text"})
 
     local function setText(v)
-        box.Text = tostring(v or "")
-        Flags[flag] = box.Text
+        label.Text = tostring(v or "")
     end
-
-    box.FocusLost:Connect(function()
-        Flags[flag] = box.Text
-        if callback then
-            callback(box.Text)
-        end
-    end)
-
-    Flags[flag] = box.Text
-    self:RegisterThemeObject(label, {TextColor3 = "Text"})
-    self:RegisterThemeObject(box, {BackgroundColor3 = "Surface2", TextColor3 = "Text", PlaceholderColor3 = "Placeholder"})
-    self:RegisterThemeObject(st, {Color = "Border"})
-    self.FlagObjects[flag] = {Type = "Textbox", Set = setText}
 
     return {
         Set = setText,
-        Get = function() return box.Text end,
-        Flag = flag,
-        Object = box,
+        Get = function()
+            return label.Text
+        end,
+        Object = label,
+        Frame = frame,
     }
 end
 
@@ -2465,7 +2439,6 @@ self.ShowUi = showUi
     return self
     
 end
-
 
 
 function SaveManager:Init(ui)
