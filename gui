@@ -276,6 +276,7 @@ local Assets = {
     sparkle = "rbxassetid://111044800239623",
     dice = "rbxassetid://81268120302865",
     repeat1 = "rbxassetid://121886242955173",
+    Folder = "rbxassetid://80846616596607",
     castle = "rbxassetid://119275077187784",
     Search = "rbxassetid://6031154871",
     Move = "rbxassetid://6031280882",
