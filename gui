@@ -356,7 +356,7 @@ local function AddHover(frame, goalIn, goalOut)
     end)
 end
 
-local function MakeDraggable(handle, target)
+local function MakeDraggable(handle, target, onDrag)
     local dragging = false
     local dragStart, startPos
 
@@ -382,9 +382,11 @@ local function MakeDraggable(handle, target)
                 startPos.Y.Scale,
                 startPos.Y.Offset + delta.Y
             )
+            if onDrag then onDrag() end  -- 👈 fire reposition callback
         end
     end)
 end
+
 
 function RuneUI:RegisterThemeObject(object, properties)
     table.insert(self.ThemeObjects, {
@@ -2117,6 +2119,13 @@ local function hideUi()
         return
     end
 
+    -- Close any open dropdowns before hiding
+    if self.OpenDropdowns then
+        for _, close in ipairs(self.OpenDropdowns) do
+            close()
+        end
+    end
+
     uiBusy = true
     cacheTransparency()
 
@@ -2297,7 +2306,13 @@ self.ShowUi = showUi
         Size = UDim2.new(1, 0, 0, 62),
         BackgroundTransparency = 1,
     })
-    MakeDraggable(topbar, root)
+    MakeDraggable(topbar, root, function()
+        if self.OpenDropdowns then
+            for _, close in ipairs(self.OpenDropdowns) do
+                close()
+            end
+        end
+    end)
 
     local search = Create("TextBox", {
         Parent = topbar,
