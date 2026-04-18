@@ -1,3 +1,21 @@
+--[[
+    Rune Hub - Custom Linoria-Inspired UI
+    Rebuilt full version with:
+      - draggable main window
+      - sidebar pages
+      - tab boxes
+      - sections/cards
+      - toggle, button, textbox, dropdown, slider
+      - notifications
+      - advanced search across the whole UI
+      - config save/load/delete/refresh/overwrite/autoload
+      - theme presets
+      - footer with marketplace game name + discord invite
+
+    Config saving requires executor support for:
+      makefolder, isfolder, listfiles, writefile, readfile, isfile, delfile
+]]
+
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
@@ -2354,17 +2372,6 @@ self.ShowUi = showUi
         ImageColor3 = Theme.SubText,
     })
     self:RegisterThemeObject(searchIcon, {ImageColor3 = "SubText"})
-
-    local moveButton = Create("ImageButton", {
-        Parent = topbar,
-        AnchorPoint = Vector2.new(1, 0),
-        Position = UDim2.new(1, -16, 0, 15),
-        Size = UDim2.new(0, 26, 0, 26),
-        BackgroundTransparency = 1,
-        Image = Assets.Move,
-        ImageColor3 = Theme.SubText,
-    })
-    self:RegisterThemeObject(moveButton, {ImageColor3 = "SubText"})
 
     local pageHolder = Create("Frame", {
         Parent = contentWrap,
