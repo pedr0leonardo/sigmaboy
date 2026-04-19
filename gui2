@@ -947,7 +947,7 @@ function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
 
             listHolder.Position = UDim2.new(
                 0, absPos.X,
-                0, absPos.Y + absSize.Y + 4
+                0, absPos.Y + absSize.Y + 10
             )
 
             local maxHeight = 150 -- 👈 change this if you want
@@ -1194,7 +1194,7 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
 
             listHolder.Position = UDim2.new(
                 0, absPos.X,
-                0, absPos.Y + absSize.Y + 4
+                0, absPos.Y + absSize.Y + 10
             )
 
             listHolder.Size = UDim2.new(
