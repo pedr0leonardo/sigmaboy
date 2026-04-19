@@ -950,7 +950,7 @@ function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
                 0, absPos.Y + absSize.Y + 74
             )
 
-            local maxHeight = 150 -- 👈 change this if you want
+            local maxHeight = 130 -- 👈 change this if you want
 
             listHolder.Size = UDim2.new(
                 0, absSize.X,
@@ -1190,7 +1190,7 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
         if expanded then
             local absPos = main.AbsolutePosition
             local absSize = main.AbsoluteSize
-            local maxHeight = 150
+            local maxHeight = 130
 
             listHolder.Position = UDim2.new(
                 0, absPos.X,
