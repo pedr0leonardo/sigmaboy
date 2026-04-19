@@ -2040,7 +2040,7 @@ function BuildWindow()
         Parent = gui,
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.new(0.5, 0, 0.5, 0),
-        Size = UDim2.new(0.95, 0, 0.85, 0),
+        Size = UDim2.new(0.5, 0, 0.85, 0),
         BackgroundColor3 = Theme.Background,
         BorderSizePixel = 0,
         ClipsDescendants = true,
@@ -2450,10 +2450,10 @@ self.ShowUi = showUi
     ListLayout(notifHolder, 8)
     self.NotificationHolder = notifHolder
 
-    root.Size = UDim2.new(0.95, 0, 0, 0)
+    root.Size = UDim2.new(0.5, 0, 0, 0)
     root.BackgroundTransparency = 1
     TweenService:Create(root, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-        Size = UDim2.new(0.95, 0, 0.85, 0),
+        Size = UDim2.new(0.5, 0, 0.85, 0),
         BackgroundTransparency = 0,
     }):Play()
 
