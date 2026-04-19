@@ -1,0 +1,2642 @@
+--[[
+    Rune Hub - Custom Linoria-Inspired UI
+    Rebuilt full version with:
+      - draggable main window
+      - sidebar pages
+      - tab boxes
+      - sections/cards
+      - toggle, button, textbox, dropdown, slider
+      - notificationsSize = UDim2.new(0, 980, 0, 620),
+      - advanced search across the whole UI
+      - config save/load/delete/refresh/overwrite/autoload
+      - theme presets
+      - footer with marketplace game name + discord invite
+
+    Config saving requires executor support for:
+      makefolder, isfolder, listfiles, writefile, readfile, isfile, delfile
+]]
+
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+local MarketplaceService = game:GetService("MarketplaceService")
+
+local RuneUI = {}
+RuneUI.__index = RuneUI
+
+local Flags = {}
+local SaveManager = {}
+local screenSize = workspace.CurrentCamera.ViewportSize
+local isMobile = UserInputService.TouchEnabled and (screenSize.X < 700 or screenSize.Y < 500)
+
+local Theme = {
+    Background = Color3.fromRGB(10, 10, 12),
+    Background2 = Color3.fromRGB(14, 14, 17),
+    Surface = Color3.fromRGB(19, 19, 23),
+    Surface2 = Color3.fromRGB(24, 24, 29),
+    Border = Color3.fromRGB(52, 52, 60),
+    BorderSoft = Color3.fromRGB(36, 36, 43),
+    Accent = Color3.fromRGB(233, 151, 175),
+    AccentDark = Color3.fromRGB(187, 110, 136),
+    Text = Color3.fromRGB(244, 244, 246),
+    SubText = Color3.fromRGB(171, 171, 181),
+    Placeholder = Color3.fromRGB(123, 123, 132),
+}
+
+local ThemePresets = {
+    Default = {
+        Background = Color3.fromRGB(10, 10, 12),
+        Background2 = Color3.fromRGB(14, 14, 17),
+        Surface = Color3.fromRGB(19, 19, 23),
+        Surface2 = Color3.fromRGB(24, 24, 29),
+        Border = Color3.fromRGB(52, 52, 60),
+        BorderSoft = Color3.fromRGB(36, 36, 43),
+        Accent = Color3.fromRGB(233, 151, 175),
+        AccentDark = Color3.fromRGB(187, 110, 136),
+        Text = Color3.fromRGB(244, 244, 246),
+        SubText = Color3.fromRGB(171, 171, 181),
+        Placeholder = Color3.fromRGB(123, 123, 132),
+    },
+    Dark = {
+        Accent = Color3.fromHex("#18181b"),
+        AccentDark = Color3.fromHex("#09090b"),
+        Background = Color3.fromHex("#101010"),
+        Background2 = Color3.fromHex("#171717"),
+        Surface = Color3.fromHex("#18181b"),
+        Surface2 = Color3.fromHex("#27272a"),
+        Border = Color3.fromHex("#FFFFFF"),
+        BorderSoft = Color3.fromHex("#52525b"),
+        Text = Color3.fromHex("#FFFFFF"),
+        SubText = Color3.fromHex("#a1a1aa"),
+        Placeholder = Color3.fromHex("#7a7a7a"),
+    },
+    Light = {
+        Accent = Color3.fromHex("#d4d4d8"),
+        AccentDark = Color3.fromHex("#a1a1aa"),
+        Background = Color3.fromHex("#fafafa"),
+        Background2 = Color3.fromHex("#f4f4f5"),
+        Surface = Color3.fromHex("#ffffff"),
+        Surface2 = Color3.fromHex("#e4e4e7"),
+        Border = Color3.fromHex("#18181b"),
+        BorderSoft = Color3.fromHex("#a1a1aa"),
+        Text = Color3.fromHex("#18181b"),
+        SubText = Color3.fromHex("#52525b"),
+        Placeholder = Color3.fromHex("#71717a"),
+    },
+    Rose = {
+        Accent = Color3.fromHex("#f43f5e"),
+        AccentDark = Color3.fromHex("#be123c"),
+        Background = Color3.fromHex("#0f0f12"),
+        Background2 = Color3.fromHex("#15151a"),
+        Surface = Color3.fromHex("#18181f"),
+        Surface2 = Color3.fromHex("#27272f"),
+        Border = Color3.fromHex("#3f3f46"),
+        BorderSoft = Color3.fromHex("#31313a"),
+        Text = Color3.fromHex("#fff1f2"),
+        SubText = Color3.fromHex("#fecdd3"),
+        Placeholder = Color3.fromHex("#fb7185"),
+    },
+    Plant = {
+        Accent = Color3.fromHex("#22c55e"),
+        AccentDark = Color3.fromHex("#15803d"),
+        Background = Color3.fromHex("#0d1110"),
+        Background2 = Color3.fromHex("#111816"),
+        Surface = Color3.fromHex("#141c19"),
+        Surface2 = Color3.fromHex("#1f2a25"),
+        Border = Color3.fromHex("#355245"),
+        BorderSoft = Color3.fromHex("#24362f"),
+        Text = Color3.fromHex("#f0fdf4"),
+        SubText = Color3.fromHex("#bbf7d0"),
+        Placeholder = Color3.fromHex("#4ade80"),
+    },
+    Red = {
+        Accent = Color3.fromHex("#ef4444"),
+        AccentDark = Color3.fromHex("#b91c1c"),
+        Background = Color3.fromHex("#0f0b0b"),
+        Background2 = Color3.fromHex("#151010"),
+        Surface = Color3.fromHex("#1a1313"),
+        Surface2 = Color3.fromHex("#2a1d1d"),
+        Border = Color3.fromHex("#4b2a2a"),
+        BorderSoft = Color3.fromHex("#362020"),
+        Text = Color3.fromHex("#fef2f2"),
+        SubText = Color3.fromHex("#fecaca"),
+        Placeholder = Color3.fromHex("#f87171"),
+    },
+    Indigo = {
+        Accent = Color3.fromHex("#6366f1"),
+        AccentDark = Color3.fromHex("#4338ca"),
+        Background = Color3.fromHex("#0f1020"),
+        Background2 = Color3.fromHex("#14162a"),
+        Surface = Color3.fromHex("#181b32"),
+        Surface2 = Color3.fromHex("#23284a"),
+        Border = Color3.fromHex("#3f4670"),
+        BorderSoft = Color3.fromHex("#2b3157"),
+        Text = Color3.fromHex("#eef2ff"),
+        SubText = Color3.fromHex("#c7d2fe"),
+        Placeholder = Color3.fromHex("#818cf8"),
+    },
+    Sky = {
+        Accent = Color3.fromHex("#0ea5e9"),
+        AccentDark = Color3.fromHex("#0369a1"),
+        Background = Color3.fromHex("#08131a"),
+        Background2 = Color3.fromHex("#0c1820"),
+        Surface = Color3.fromHex("#10202a"),
+        Surface2 = Color3.fromHex("#193142"),
+        Border = Color3.fromHex("#2d4d61"),
+        BorderSoft = Color3.fromHex("#213847"),
+        Text = Color3.fromHex("#f0f9ff"),
+        SubText = Color3.fromHex("#bae6fd"),
+        Placeholder = Color3.fromHex("#38bdf8"),
+    },
+    Violet = {
+        Accent = Color3.fromHex("#8b5cf6"),
+        AccentDark = Color3.fromHex("#6d28d9"),
+        Background = Color3.fromHex("#110d1b"),
+        Background2 = Color3.fromHex("#171124"),
+        Surface = Color3.fromHex("#1d1530"),
+        Surface2 = Color3.fromHex("#2d2148"),
+        Border = Color3.fromHex("#4b3a70"),
+        BorderSoft = Color3.fromHex("#352854"),
+        Text = Color3.fromHex("#f5f3ff"),
+        SubText = Color3.fromHex("#ddd6fe"),
+        Placeholder = Color3.fromHex("#a78bfa"),
+    },
+    Amber = {
+        Accent = Color3.fromHex("#f59e0b"),
+        AccentDark = Color3.fromHex("#b45309"),
+        Background = Color3.fromHex("#141008"),
+        Background2 = Color3.fromHex("#1b150b"),
+        Surface = Color3.fromHex("#241b0f"),
+        Surface2 = Color3.fromHex("#382915"),
+        Border = Color3.fromHex("#5c431d"),
+        BorderSoft = Color3.fromHex("#433115"),
+        Text = Color3.fromHex("#fffbeb"),
+        SubText = Color3.fromHex("#fde68a"),
+        Placeholder = Color3.fromHex("#fbbf24"),
+    },
+    Emerald = {
+        Accent = Color3.fromHex("#10b981"),
+        AccentDark = Color3.fromHex("#047857"),
+        Background = Color3.fromHex("#091411"),
+        Background2 = Color3.fromHex("#0d1b17"),
+        Surface = Color3.fromHex("#11231e"),
+        Surface2 = Color3.fromHex("#18342b"),
+        Border = Color3.fromHex("#2b5a4e"),
+        BorderSoft = Color3.fromHex("#21443a"),
+        Text = Color3.fromHex("#ecfdf5"),
+        SubText = Color3.fromHex("#a7f3d0"),
+        Placeholder = Color3.fromHex("#34d399"),
+    },
+    Midnight = {
+        Accent = Color3.fromHex("#1e293b"),
+        AccentDark = Color3.fromHex("#0f172a"),
+        Background = Color3.fromHex("#020617"),
+        Background2 = Color3.fromHex("#06101f"),
+        Surface = Color3.fromHex("#0b1324"),
+        Surface2 = Color3.fromHex("#162033"),
+        Border = Color3.fromHex("#334155"),
+        BorderSoft = Color3.fromHex("#1f2c42"),
+        Text = Color3.fromHex("#e2e8f0"),
+        SubText = Color3.fromHex("#94a3b8"),
+        Placeholder = Color3.fromHex("#64748b"),
+    },
+    Crimson = {
+        Accent = Color3.fromHex("#dc143c"),
+        AccentDark = Color3.fromHex("#9f1239"),
+        Background = Color3.fromHex("#12070b"),
+        Background2 = Color3.fromHex("#180b10"),
+        Surface = Color3.fromHex("#210f15"),
+        Surface2 = Color3.fromHex("#341520"),
+        Border = Color3.fromHex("#5a2636"),
+        BorderSoft = Color3.fromHex("#441c28"),
+        Text = Color3.fromHex("#fff1f2"),
+        SubText = Color3.fromHex("#fecdd3"),
+        Placeholder = Color3.fromHex("#fb7185"),
+    },
+    ["Monokai Pro"] = {
+        Accent = Color3.fromHex("#ff6188"),
+        AccentDark = Color3.fromHex("#fc9867"),
+        Background = Color3.fromHex("#2d2a2e"),
+        Background2 = Color3.fromHex("#221f22"),
+        Surface = Color3.fromHex("#363337"),
+        Surface2 = Color3.fromHex("#403e41"),
+        Border = Color3.fromHex("#5b595c"),
+        BorderSoft = Color3.fromHex("#4a484c"),
+        Text = Color3.fromHex("#fcfcfa"),
+        SubText = Color3.fromHex("#a9dc76"),
+        Placeholder = Color3.fromHex("#78dce8"),
+    },
+    ["Cotton Candy"] = {
+        Accent = Color3.fromHex("#ff7eb6"),
+        AccentDark = Color3.fromHex("#7afcff"),
+        Background = Color3.fromHex("#1a1020"),
+        Background2 = Color3.fromHex("#21152a"),
+        Surface = Color3.fromHex("#2a1b36"),
+        Surface2 = Color3.fromHex("#382448"),
+        Border = Color3.fromHex("#5b3d72"),
+        BorderSoft = Color3.fromHex("#472d59"),
+        Text = Color3.fromHex("#fff7fb"),
+        SubText = Color3.fromHex("#ffd6e7"),
+        Placeholder = Color3.fromHex("#b6f3ff"),
+    },
+    Mellowsi = {
+        Accent = Color3.fromHex("#f9a8d4"),
+        AccentDark = Color3.fromHex("#c084fc"),
+        Background = Color3.fromHex("#151218"),
+        Background2 = Color3.fromHex("#1d1821"),
+        Surface = Color3.fromHex("#241e2a"),
+        Surface2 = Color3.fromHex("#31283a"),
+        Border = Color3.fromHex("#4b3d58"),
+        BorderSoft = Color3.fromHex("#3c3147"),
+        Text = Color3.fromHex("#faf5ff"),
+        SubText = Color3.fromHex("#e9d5ff"),
+        Placeholder = Color3.fromHex("#f5bde6"),
+    },
+    Rainbow = {
+        Accent = Color3.fromHex("#ff5f6d"),
+        AccentDark = Color3.fromHex("#ffc371"),
+        Background = Color3.fromHex("#0f0f14"),
+        Background2 = Color3.fromHex("#15151d"),
+        Surface = Color3.fromHex("#1c1c27"),
+        Surface2 = Color3.fromHex("#272736"),
+        Border = Color3.fromHex("#44445a"),
+        BorderSoft = Color3.fromHex("#323246"),
+        Text = Color3.fromHex("#ffffff"),
+        SubText = Color3.fromHex("#d4d4ff"),
+        Placeholder = Color3.fromHex("#a5b4fc"),
+    },
+}
+
+local Assets = {
+    Logo = "rbxassetid://87227163199096",
+    Home = "rbxassetid://6026568198",
+    autofarm = "rbxassetid://81872698913435",
+    cart = "rbxassetid://128420521375441",
+    package = "rbxassetid://97261141732706",
+    sparkle = "rbxassetid://111044800239623",
+    dice = "rbxassetid://81268120302865",
+    repeat1 = "rbxassetid://121886242955173",
+    Folder = "rbxassetid://80846616596607",
+    castle = "rbxassetid://119275077187784",
+    Search = "rbxassetid://6031154871",
+    Move = "rbxassetid://6031280882",
+    Chevron = "rbxassetid://6031091004",
+    Farm = "rbxassetid://6034509993",
+    Combat = "rbxassetid://6035047409",
+    Player = "rbxassetid://6034509993",
+    Visual = "rbxassetid://6031075938",
+    Teleport = "rbxassetid://6035190846",
+    Settings = "rbxassetid://6031280882",
+    Settings2 = "rbxassetid://80758916183665",
+    globe = "rbxassetid://114238209622913",
+    key = "rbxassetid://83619031955390",
+}
+
+local function Create(className, props)
+    local obj = Instance.new(className)
+
+    props = props or {}
+
+    -- ✅ set name automatically if not provided
+    obj.Name = props.Name or className
+
+    for k, v in pairs(props) do
+        obj[k] = v
+    end
+
+    return obj
+end
+
+local function Round(obj, radius)
+    Create("UICorner", {
+        CornerRadius = UDim.new(0, radius or 8),
+        Parent = obj,
+    })
+end
+
+local function Stroke(obj, color, thickness, transparency)
+    local st = Create("UIStroke", {
+        Color = color or Theme.Border,
+        Thickness = thickness or 1,
+        Transparency = transparency or 0,
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+        LineJoinMode = Enum.LineJoinMode.Round,
+        Parent = obj,
+    })
+    return st
+end
+
+local function Padding(obj, l, r, t, b)
+    Create("UIPadding", {
+        PaddingLeft = UDim.new(0, l or 0),
+        PaddingRight = UDim.new(0, r or l or 0),
+        PaddingTop = UDim.new(0, t or 0),
+        PaddingBottom = UDim.new(0, b or t or 0),
+        Parent = obj,
+    })
+end
+
+local function ListLayout(obj, pad, horizontal, sort)
+    return Create("UIListLayout", {
+        Padding = UDim.new(0, pad or 0),
+        FillDirection = horizontal and Enum.FillDirection.Horizontal or Enum.FillDirection.Vertical,
+        SortOrder = sort or Enum.SortOrder.LayoutOrder,
+        Parent = obj,
+    })
+end
+
+local function AddHover(frame, goalIn, goalOut)
+    local inTween = TweenService:Create(frame, TweenInfo.new(0.12), goalIn)
+    local outTween = TweenService:Create(frame, TweenInfo.new(0.12), goalOut)
+    frame.MouseEnter:Connect(function()
+        inTween:Play()
+    end)
+    frame.MouseLeave:Connect(function()
+        outTween:Play()
+    end)
+end
+
+local function MakeDraggable(handle, target, onDrag)
+    local dragging = false
+    local dragStart, startPos
+
+    handle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = target.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            target.Position = UDim2.new(
+                startPos.X.Scale,
+                startPos.X.Offset + delta.X,
+                startPos.Y.Scale,
+                startPos.Y.Offset + delta.Y
+            )
+            if onDrag then onDrag() end
+        end
+    end)
+end
+
+
+function RuneUI:RegisterThemeObject(object, properties)
+    table.insert(self.ThemeObjects, {
+        Object = object,
+        Properties = properties,
+    })
+end
+
+function RuneUI:ApplyTheme(presetName)
+    local preset = ThemePresets[presetName]
+    if not preset then
+        return false
+    end
+
+    for k, v in pairs(preset) do
+        Theme[k] = v
+    end
+    Flags["Theme Preset"] = presetName
+
+    for _, item in ipairs(self.ThemeObjects) do
+        if item.Object and item.Object.Parent then
+            for prop, themeKey in pairs(item.Properties) do
+                local themeValue = Theme[themeKey]
+                if themeValue ~= nil then
+                    pcall(function()
+                        item.Object[prop] = themeValue
+                    end)
+                end
+            end
+        end
+    end
+
+    for flag, obj in pairs(self.FlagObjects) do
+        if obj and obj.Type == "Toggle" and obj.Set then
+            obj.Set(Flags[flag] == true)
+        end
+    end
+
+    for _, page in ipairs(self.Pages or {}) do
+        if page.TabBoxes then
+            for _, tabBox in ipairs(page.TabBoxes) do
+                for _, tab in ipairs(tabBox.Tabs or {}) do
+                    if tab.Content and tab.Content.Visible and tab.Select then
+                        tab.Select()
+                        break
+                    end
+                end
+            end
+        end
+    end
+
+    return true
+end
+
+function RuneUI:Notify(title, text, duration)
+    duration = duration or 3
+
+    local holder = self.NotificationHolder
+    local card = Create("Frame", {
+        Parent = holder,
+        Size = UDim2.new(1, 0, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundColor3 = Theme.Surface,
+        BorderSizePixel = 0,
+    })
+    Round(card, 10)
+    local cardStroke = Stroke(card, Theme.Border)
+    Padding(card, 12, 12, 10, 10)
+
+    local titleObj = Create("TextLabel", {
+        Parent = card,
+        Position = UDim2.new(0, 16, 0, 0),
+        Size = UDim2.new(1, -20, 0, 18),
+        BackgroundTransparency = 1,
+        Font = Enum.Font.Code,
+        Text = title,
+        TextColor3 = Theme.Text,
+        TextSize = 16,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    local descObj = Create("TextLabel", {
+        Parent = card,
+        Position = UDim2.new(0, 16, 0, 22),
+        Size = UDim2.new(1, -20, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+        Font = Enum.Font.Code,
+        Text = text,
+        TextWrapped = true,
+        TextColor3 = Theme.SubText,
+        TextSize = 14,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextYAlignment = Enum.TextYAlignment.Top,
+    })
+
+    local accent = Create("Frame", {
+        Parent = card,
+        BackgroundColor3 = Theme.Accent,
+        BorderSizePixel = 0,
+        Size = UDim2.new(0, 2, 1, -8),
+        Position = UDim2.new(0, 0, 0, 4),
+    })
+    Round(accent, 2)
+
+    self:RegisterThemeObject(card, {BackgroundColor3 = "Surface"})
+    self:RegisterThemeObject(cardStroke, {Color = "Border"})
+    self:RegisterThemeObject(titleObj, {TextColor3 = "Text"})
+    self:RegisterThemeObject(descObj, {TextColor3 = "SubText"})
+    self:RegisterThemeObject(accent, {BackgroundColor3 = "Accent"})
+
+    card.BackgroundTransparency = 1
+    card.Position = UDim2.new(1, 20, 0, 0)
+    TweenService:Create(card, TweenInfo.new(0.18), {
+        BackgroundTransparency = 0,
+        Position = UDim2.new(0, 0, 0, 0),
+    }):Play()
+
+    task.delay(duration, function()
+        local tween = TweenService:Create(card, TweenInfo.new(0.18), {
+            BackgroundTransparency = 1,
+            Position = UDim2.new(1, 20, 0, 0),
+        })
+        tween:Play()
+        tween.Completed:Wait()
+        if card then
+            card:Destroy()
+        end
+    end)
+end
+
+function RuneUI:CreateToggle(parent, title, default, callback, flag)
+    flag = flag or title
+    local state = default == true
+
+    local row = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 26),
+        BackgroundTransparency = 1,
+    })
+
+    local label = Create("TextLabel", {
+        Parent = row,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, -60, 1, 0),
+        Font = Enum.Font.Code,
+        Text = title,
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    local toggleBtn = Create("TextButton", {
+        Parent = row,
+        AnchorPoint = Vector2.new(1, 0.5),
+        Position = UDim2.new(1, 0, 0.5, 0),
+        Size = UDim2.new(0, 42, 0, 22),
+        BackgroundColor3 = state and Theme.Accent or Theme.Surface2,
+        BorderSizePixel = 0,
+        Text = "",
+        AutoButtonColor = false,
+    })
+    Round(toggleBtn, 999)
+    local toggleStroke = Stroke(toggleBtn, state and Theme.Accent or Theme.BorderSoft)
+
+    local knob = Create("Frame", {
+        Parent = toggleBtn,
+        AnchorPoint = Vector2.new(0, 0.5),
+        Position = state and UDim2.new(1, -20, 0.5, 0) or UDim2.new(0, 2, 0.5, 0),
+        Size = UDim2.new(0, 18, 0, 18),
+        BackgroundColor3 = Color3.fromRGB(245, 245, 246),
+        BorderSizePixel = 0,
+    })
+    Round(knob, 999)
+
+    local function setState(v)
+        state = v == true
+        Flags[flag] = state
+        TweenService:Create(toggleBtn, TweenInfo.new(0.15), {
+            BackgroundColor3 = state and Theme.Accent or Theme.Surface2,
+        }):Play()
+        TweenService:Create(toggleStroke, TweenInfo.new(0.15), {
+            Color = state and Theme.Accent or Theme.BorderSoft,
+        }):Play()
+        TweenService:Create(knob, TweenInfo.new(0.15), {
+            Position = state and UDim2.new(1, -20, 0.5, 0) or UDim2.new(0, 2, 0.5, 0),
+        }):Play()
+        if callback then
+            callback(state)
+        end
+    end
+
+    toggleBtn.MouseButton1Click:Connect(function()
+        setState(not state)
+    end)
+
+    Flags[flag] = state
+    self:RegisterThemeObject(label, {TextColor3 = "Text"})
+    self.FlagObjects[flag] = {Type = "Toggle", Set = setState, Stroke = toggleStroke, Button = toggleBtn}
+
+    return {
+        Set = setState,
+        Get = function() return state end,
+        Flag = flag,
+    }
+end
+
+function RuneUI:CreateButton(parent, title, callback)
+    local btn = Create("TextButton", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 32),
+        BackgroundColor3 = Theme.Surface2,
+        BorderSizePixel = 0,
+        Text = title,
+        Font = Enum.Font.Code,
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        AutoButtonColor = false,
+    })
+    Round(btn, 8)
+    local st = Stroke(btn, Theme.Border)
+    AddHover(btn, {BackgroundColor3 = Color3.fromRGB(30, 30, 36)}, {BackgroundColor3 = Theme.Surface2})
+    self:RegisterThemeObject(btn, {BackgroundColor3 = "Surface2", TextColor3 = "Text"})
+    self:RegisterThemeObject(st, {Color = "Border"})
+    btn.MouseButton1Click:Connect(function()
+        if callback then
+            callback()
+        end
+    end)
+    return btn
+end
+
+function RuneUI:CreateKeybind(parent, title, defaultKey, callback, flag)
+    flag = flag or title
+    local currentKey = defaultKey or Enum.KeyCode.RightControl
+    local listening = false
+
+    local row = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 32),
+        BackgroundTransparency = 1,
+    })
+
+    local label = Create("TextLabel", {
+        Parent = row,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, -110, 1, 0),
+        Font = Enum.Font.Code,
+        Text = title,
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    local button = Create("TextButton", {
+        Parent = row,
+        AnchorPoint = Vector2.new(1, 0.5),
+        Position = UDim2.new(1, 0, 0.5, 0),
+        Size = UDim2.new(0, 100, 0, 28),
+        BackgroundColor3 = Theme.Surface2,
+        BorderSizePixel = 0,
+        Text = currentKey.Name,
+        Font = Enum.Font.Code,
+        TextColor3 = Theme.Text,
+        TextSize = 14,
+        AutoButtonColor = false,
+    })
+    Round(button, 8)
+    local buttonStroke = Stroke(button, Theme.Border)
+
+    self:RegisterThemeObject(label, {TextColor3 = "Text"})
+    self:RegisterThemeObject(button, {BackgroundColor3 = "Surface2", TextColor3 = "Text"})
+    self:RegisterThemeObject(buttonStroke, {Color = "Border"})
+
+    local function setKey(newKey)
+        if typeof(newKey) == "EnumItem" and newKey.EnumType == Enum.KeyCode then
+            currentKey = newKey
+            button.Text = currentKey.Name
+            Flags[flag] = currentKey.Name
+
+            if callback then
+                callback(currentKey)
+            end
+        end
+    end
+
+    button.MouseButton1Click:Connect(function()
+        if listening then
+            return
+        end
+
+        listening = true
+        button.Text = "..."
+    end)
+
+    local inputConn
+    inputConn = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then
+            return
+        end
+
+        if listening then
+            if input.UserInputType == Enum.UserInputType.Keyboard then
+                listening = false
+                setKey(input.KeyCode)
+            end
+            return
+        end
+
+        if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == currentKey then
+            if callback then
+                callback(currentKey, true)
+            end
+        end
+    end)
+
+    Flags[flag] = currentKey.Name
+    self.FlagObjects[flag] = {
+        Type = "Keybind",
+        Set = setKey,
+        Get = function()
+            return currentKey
+        end,
+        Connection = inputConn,
+    }
+
+    return {
+        Set = setKey,
+        Get = function()
+            return currentKey
+        end,
+        Flag = flag,
+        Button = button,
+    }
+end
+
+function RuneUI:CreateTextbox(parent, title, placeholder, callback, flag)
+    flag = flag or title
+
+    local holder = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 56),
+        BackgroundTransparency = 1,
+    })
+
+    local label = Create("TextLabel", {
+        Parent = holder,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 16),
+        Font = Enum.Font.Code,
+        Text = title,
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    local box = Create("TextBox", {
+        Parent = holder,
+        Position = UDim2.new(0, 0, 0, 22),
+        Size = UDim2.new(1, 0, 0, 30),
+        BackgroundColor3 = Theme.Surface2,
+        BorderSizePixel = 0,
+        PlaceholderText = placeholder or "",
+        Font = Enum.Font.Code,
+        Text = "",
+        TextColor3 = Theme.Text,
+        PlaceholderColor3 = Theme.Placeholder,
+        TextSize = 15,
+        ClearTextOnFocus = false,
+    })
+    Round(box, 8)
+    local st = Stroke(box, Theme.Border)
+
+    box:GetPropertyChangedSignal("Text"):Connect(function()
+        Flags[flag] = box.Text
+    end)
+
+    local function setText(v)
+        box.Text = tostring(v or "")
+        Flags[flag] = box.Text
+    end
+
+    box.FocusLost:Connect(function()
+        Flags[flag] = box.Text
+        if callback then
+            callback(box.Text)
+        end
+    end)
+
+    Flags[flag] = box.Text
+    self:RegisterThemeObject(label, {TextColor3 = "Text"})
+    self:RegisterThemeObject(box, {BackgroundColor3 = "Surface2", TextColor3 = "Text", PlaceholderColor3 = "Placeholder"})
+    self:RegisterThemeObject(st, {Color = "Border"})
+    self.FlagObjects[flag] = {Type = "Textbox", Set = setText}
+
+    return {
+        Set = setText,
+        Get = function() return box.Text end,
+        Flag = flag,
+        Object = box,
+    }
+end
+
+function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
+    flag = flag or title
+    options = options or {}
+    local selected = default or (options[1] or "-----")
+    local expanded = false
+
+    self.OpenDropdowns = self.OpenDropdowns or {}
+
+    local holder = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 56),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+    })
+
+    local label = Create("TextLabel", {
+        Parent = holder,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 16),
+        Font = Enum.Font.Code,
+        Text = title,
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    local main = Create("TextButton", {
+        Parent = holder,
+        Position = UDim2.new(0, 0, 0, 22),
+        Size = UDim2.new(1, 0, 0, 30),
+        BackgroundColor3 = Theme.Surface2,
+        BorderSizePixel = 0,
+        Text = "",
+        AutoButtonColor = false,
+    })
+    Round(main, 8)
+    local mainStroke = Stroke(main, Theme.Border)
+
+    local valueLabel = Create("TextLabel", {
+        Parent = main,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 10, 0, 0),
+        Size = UDim2.new(1, -30, 1, 0),
+        Font = Enum.Font.Code,
+        Text = tostring(selected),
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    local arrow = Create("ImageLabel", {
+        Parent = main,
+        BackgroundTransparency = 1,
+        AnchorPoint = Vector2.new(1, 0.5),
+        Position = UDim2.new(1, -10, 0.5, 0),
+        Size = UDim2.new(0, 14, 0, 14),
+        Image = Assets.Chevron,
+        ImageColor3 = Theme.SubText,
+    })
+
+    local listHolder = Create("ScrollingFrame", {
+        Parent = self.ScreenGui,
+        Position = UDim2.new(0, 0, 0, 56),
+        Size = UDim2.new(1, 0, 0, 0),
+        BackgroundColor3 = Theme.Surface,
+        BorderSizePixel = 0,
+        Visible = false,
+        ZIndex = 4,
+        CanvasSize = UDim2.new(0, 0, 0, 0),
+        ScrollBarThickness = 4,
+        ScrollingDirection = Enum.ScrollingDirection.Y,
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+    })
+
+    local function closeDropdown()
+        expanded = false
+        listHolder.Visible = false
+        TweenService:Create(arrow, TweenInfo.new(0.15), {
+            Rotation = 0
+        }):Play()
+    end
+
+
+    Round(listHolder, 8)
+    local listStroke = Stroke(listHolder, Theme.Border)
+    Padding(listHolder, 6, 6, 6, 6)
+    ListLayout(listHolder, 4)
+    listHolder.ClipsDescendants = true
+    table.insert(self.OpenDropdowns, closeDropdown)
+    local function setValue(v)
+        selected = tostring(v)
+        Flags[flag] = selected
+        valueLabel.Text = selected
+        if callback then
+            callback(selected)
+        end
+    end
+
+    local function rebuildOptions(newOptions)
+        options = newOptions or options or {}
+        for _, child in ipairs(listHolder:GetChildren()) do
+            if child:IsA("TextButton") then
+                child:Destroy()
+            end
+        end
+
+        for _, option in ipairs(options) do
+            local opt = Create("TextButton", {
+                Parent = listHolder,
+                Size = UDim2.new(1, 0, 0, 26),
+                BackgroundColor3 = Theme.Surface2,
+                BorderSizePixel = 0,
+                Text = tostring(option),
+                Font = Enum.Font.Code,
+                TextColor3 = Theme.Text,
+                TextSize = 14,
+                AutoButtonColor = false,
+                ZIndex = 5,
+            })
+            Round(opt, 6)
+            local optStroke = Stroke(opt, Theme.BorderSoft)
+            AddHover(opt, {BackgroundColor3 = Color3.fromRGB(31, 31, 38)}, {BackgroundColor3 = Theme.Surface2})
+            self:RegisterThemeObject(opt, {BackgroundColor3 = "Surface2", TextColor3 = "Text"})
+            self:RegisterThemeObject(optStroke, {Color = "BorderSoft"})
+            opt.MouseButton1Click:Connect(function()
+                setValue(option)
+                expanded = false
+                listHolder.Visible = false
+                TweenService:Create(arrow, TweenInfo.new(0.15), {Rotation = 0}):Play()
+            end)
+        end
+    end
+
+    rebuildOptions(options)
+
+    main.MouseButton1Click:Connect(function()
+        local wasExpanded = expanded
+
+        if self.OpenDropdowns then
+            for _, close in ipairs(self.OpenDropdowns) do
+                close()
+            end
+        end
+
+        expanded = not wasExpanded
+        listHolder.Visible = expanded
+
+        if expanded then
+            local absPos = main.AbsolutePosition
+            local absSize = main.AbsoluteSize
+
+            listHolder.Position = UDim2.new(
+                0, absPos.X,
+                0, absPos.Y + absSize.Y + 4
+            )
+
+            local maxHeight = 150 -- 👈 change this if you want
+
+            listHolder.Size = UDim2.new(
+                0, absSize.X,
+                0, maxHeight
+            )
+        end
+
+        TweenService:Create(arrow, TweenInfo.new(0.15), {
+            Rotation = expanded and 180 or 0
+        }):Play()
+    end)
+
+    Flags[flag] = selected
+    self:RegisterThemeObject(label, {TextColor3 = "Text"})
+    self:RegisterThemeObject(main, {BackgroundColor3 = "Surface2"})
+    self:RegisterThemeObject(mainStroke, {Color = "Border"})
+    self:RegisterThemeObject(valueLabel, {TextColor3 = "Text"})
+    self:RegisterThemeObject(arrow, {ImageColor3 = "SubText"})
+    self:RegisterThemeObject(listHolder, {BackgroundColor3 = "Surface"})
+    self:RegisterThemeObject(listStroke, {Color = "Border"})
+    self.FlagObjects[flag] = {Type = "Dropdown", Set = setValue}
+
+    return {
+        Set = setValue,
+        Get = function() return selected end,
+        Flag = flag,
+        Refresh = rebuildOptions,
+    }
+end
+
+function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, flag)
+    flag = flag or title
+    options = options or {}
+    default = default or {}
+
+    local selectedMap = {}
+    for _, v in ipairs(default) do
+        selectedMap[tostring(v)] = true
+    end
+
+    local expanded = false
+    self.OpenDropdowns = self.OpenDropdowns or {}
+
+    local holder = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 56),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+    })
+
+    local label = Create("TextLabel", {
+        Parent = holder,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 0, 16),
+        Font = Enum.Font.Code,
+        Text = title,
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    local main = Create("TextButton", {
+        Parent = holder,
+        Position = UDim2.new(0, 0, 0, 22),
+        Size = UDim2.new(1, 0, 0, 30),
+        BackgroundColor3 = Theme.Surface2,
+        BorderSizePixel = 0,
+        Text = "",
+        AutoButtonColor = false,
+    })
+    Round(main, 8)
+    local mainStroke = Stroke(main, Theme.Border)
+
+    local valueLabel = Create("TextLabel", {
+        Parent = main,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 10, 0, 0),
+        Size = UDim2.new(1, -30, 1, 0),
+        Font = Enum.Font.Code,
+        Text = "-----",
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextTruncate = Enum.TextTruncate.AtEnd,
+    })
+
+    local arrow = Create("ImageLabel", {
+        Parent = main,
+        BackgroundTransparency = 1,
+        AnchorPoint = Vector2.new(1, 0.5),
+        Position = UDim2.new(1, -10, 0.5, 0),
+        Size = UDim2.new(0, 14, 0, 14),
+        Image = Assets.Chevron,
+        ImageColor3 = Theme.SubText,
+    })
+
+    local listHolder = Create("ScrollingFrame", {
+        Parent = self.ScreenGui,
+        Position = UDim2.new(0, 0, 0, 56),
+        Size = UDim2.new(1, 0, 0, 0),
+        BackgroundColor3 = Theme.Surface,
+        BorderSizePixel = 0,
+        Visible = false,
+        ZIndex = 4,
+        CanvasSize = UDim2.new(0, 0, 0, 0),
+        ScrollBarThickness = 4,
+        ScrollingDirection = Enum.ScrollingDirection.Y,
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+    })
+    Round(listHolder, 8)
+    local listStroke = Stroke(listHolder, Theme.Border)
+    Padding(listHolder, 6, 6, 6, 6)
+    ListLayout(listHolder, 4)
+    listHolder.ClipsDescendants = true
+
+    local function getSelectedList()
+        local out = {}
+        for _, option in ipairs(options) do
+            option = tostring(option)
+            if selectedMap[option] then
+                table.insert(out, option)
+            end
+        end
+        return out
+    end
+
+    local function updateLabel()
+        local picked = getSelectedList()
+        if #picked == 0 then
+            valueLabel.Text = "-----"
+        elseif #picked <= 2 then
+            valueLabel.Text = table.concat(picked, ", ")
+        else
+            valueLabel.Text = tostring(#picked) .. " selected"
+        end
+        Flags[flag] = picked
+        if callback then
+            callback(picked)
+        end
+    end
+
+    local function closeDropdown()
+        expanded = false
+        listHolder.Visible = false
+        TweenService:Create(arrow, TweenInfo.new(0.15), {
+            Rotation = 0
+        }):Play()
+    end
+    table.insert(self.OpenDropdowns, closeDropdown)
+
+    local function rebuildOptions(newOptions)
+        options = newOptions or options or {}
+
+        for _, child in ipairs(listHolder:GetChildren()) do
+            if child:IsA("TextButton") then
+                child:Destroy()
+            end
+        end
+
+        for _, option in ipairs(options) do
+            option = tostring(option)
+
+            local opt = Create("TextButton", {
+                Parent = listHolder,
+                Size = UDim2.new(1, 0, 0, 26),
+                BackgroundColor3 = Theme.Surface2,
+                BorderSizePixel = 0,
+                Text = "",
+                AutoButtonColor = false,
+                ZIndex = 5,
+            })
+            Round(opt, 6)
+            local optStroke = Stroke(opt, Theme.BorderSoft)
+
+            local check = Create("Frame", {
+                Parent = opt,
+                AnchorPoint = Vector2.new(0, 0.5),
+                Position = UDim2.new(0, 8, 0.5, 0),
+                Size = UDim2.new(0, 14, 0, 14),
+                BackgroundColor3 = selectedMap[option] and Theme.Accent or Theme.Background2,
+                BorderSizePixel = 0,
+                ZIndex = 6,
+            })
+            Round(check, 999)
+            local checkStroke = Stroke(check, selectedMap[option] and Theme.Accent or Theme.BorderSoft)
+
+            local optLabel = Create("TextLabel", {
+                Parent = opt,
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, 30, 0, 0),
+                Size = UDim2.new(1, -38, 1, 0),
+                Font = Enum.Font.Code,
+                Text = option,
+                TextColor3 = Theme.Text,
+                TextSize = 14,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                ZIndex = 6,
+            })
+
+            AddHover(opt, {BackgroundColor3 = Color3.fromRGB(31, 31, 38)}, {BackgroundColor3 = Theme.Surface2})
+
+            self:RegisterThemeObject(opt, {BackgroundColor3 = "Surface2"})
+            self:RegisterThemeObject(optStroke, {Color = "BorderSoft"})
+            self:RegisterThemeObject(optLabel, {TextColor3 = "Text"})
+
+            opt.MouseButton1Click:Connect(function()
+                selectedMap[option] = not selectedMap[option]
+
+                TweenService:Create(check, TweenInfo.new(0.12), {
+                    BackgroundColor3 = selectedMap[option] and Theme.Accent or Theme.Background2
+                }):Play()
+
+                TweenService:Create(checkStroke, TweenInfo.new(0.12), {
+                    Color = selectedMap[option] and Theme.Accent or Theme.BorderSoft
+                }):Play()
+
+                updateLabel()
+            end)
+        end
+    end
+
+    rebuildOptions(options)
+    updateLabel()
+
+    main.MouseButton1Click:Connect(function()
+        local wasExpanded = expanded
+
+        if self.OpenDropdowns then
+            for _, close in ipairs(self.OpenDropdowns) do
+                close()
+            end
+        end
+
+        expanded = not wasExpanded
+        listHolder.Visible = expanded
+
+        if expanded then
+            local absPos = main.AbsolutePosition
+            local absSize = main.AbsoluteSize
+            local maxHeight = 150
+
+            listHolder.Position = UDim2.new(
+                0, absPos.X,
+                0, absPos.Y + absSize.Y + 4
+            )
+
+            listHolder.Size = UDim2.new(
+                0, absSize.X,
+                0, maxHeight
+            )
+        end
+
+        TweenService:Create(arrow, TweenInfo.new(0.15), {
+            Rotation = expanded and 180 or 0
+        }):Play()
+    end)
+
+    self:RegisterThemeObject(label, {TextColor3 = "Text"})
+    self:RegisterThemeObject(main, {BackgroundColor3 = "Surface2"})
+    self:RegisterThemeObject(mainStroke, {Color = "Border"})
+    self:RegisterThemeObject(valueLabel, {TextColor3 = "Text"})
+    self:RegisterThemeObject(arrow, {ImageColor3 = "SubText"})
+    self:RegisterThemeObject(listHolder, {BackgroundColor3 = "Surface"})
+    self:RegisterThemeObject(listStroke, {Color = "Border"})
+
+    self.FlagObjects[flag] = {
+        Type = "MultiDropdown",
+        Set = function(values)
+            selectedMap = {}
+            for _, v in ipairs(values or {}) do
+                selectedMap[tostring(v)] = true
+            end
+            rebuildOptions(options)
+            updateLabel()
+        end
+    }
+
+    return {
+        Set = function(values)
+            selectedMap = {}
+            for _, v in ipairs(values or {}) do
+                selectedMap[tostring(v)] = true
+            end
+            rebuildOptions(options)
+            updateLabel()
+        end,
+        Get = function()
+            return getSelectedList()
+        end,
+        Flag = flag,
+        Refresh = function(newOptions)
+            options = newOptions or options
+            rebuildOptions(options)
+            updateLabel()
+        end,
+    }
+end
+
+function RuneUI:CreateSlider(parent, title, min, max, default, callback, flag, step)
+    flag = flag or title
+    min = min or 0
+    max = max or 100
+    step = step or 1
+    local value = default or min
+
+    local holder = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 54),
+        BackgroundTransparency = 1,
+    })
+
+    local label = Create("TextLabel", {
+        Parent = holder,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, -50, 0, 16),
+        Font = Enum.Font.Code,
+        Text = title,
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    local valueLabel = Create("TextLabel", {
+        Parent = holder,
+        BackgroundTransparency = 1,
+        AnchorPoint = Vector2.new(1, 0),
+        Position = UDim2.new(1, 0, 0, 0),
+        Size = UDim2.new(0, 50, 0, 16),
+        Font = Enum.Font.Code,
+        Text = tostring(value),
+        TextColor3 = Theme.SubText,
+        TextSize = 14,
+        TextXAlignment = Enum.TextXAlignment.Right,
+    })
+
+    local bar = Create("Frame", {
+        Parent = holder,
+        Position = UDim2.new(0, 0, 0, 28),
+        Size = UDim2.new(1, 0, 0, 6),
+        BackgroundColor3 = Theme.Surface2,
+        BorderSizePixel = 0,
+    })
+    Round(bar, 999)
+    local barStroke = Stroke(bar, Theme.BorderSoft)
+
+    local fill = Create("Frame", {
+        Parent = bar,
+        Size = UDim2.new((value - min) / (max - min), 0, 1, 0),
+        BackgroundColor3 = Theme.Accent,
+        BorderSizePixel = 0,
+    })
+    Round(fill, 999)
+
+    local knob = Create("Frame", {
+        Parent = bar,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new((value - min) / (max - min), 0, 0.5, 0),
+        Size = UDim2.new(0, 12, 0, 12),
+        BackgroundColor3 = Color3.fromRGB(245, 245, 246),
+        BorderSizePixel = 0,
+    })
+    Round(knob, 999)
+
+    local dragging = false
+
+    local function snapToStep(v)
+        if step <= 0 then
+            return math.clamp(v, min, max)
+        end
+
+        v = math.clamp(v, min, max)
+        v = min + math.floor(((v - min) / step) + 0.5) * step
+
+        if typeof(step) == "number" and step < 1 then
+            local decimals = tostring(step):match("%.(.+)")
+            local places = decimals and #decimals or 0
+            v = tonumber(string.format("%." .. places .. "f", v))
+        end
+
+        return math.clamp(v, min, max)
+    end
+
+    local function setValue(v)
+        v = snapToStep(tonumber(v) or min)
+        value = v
+
+        local pct = (value - min) / (max - min)
+        fill.Size = UDim2.new(pct, 0, 1, 0)
+        knob.Position = UDim2.new(pct, 0, 0.5, 0)
+        valueLabel.Text = tostring(value)
+        Flags[flag] = value
+
+        if callback then
+            callback(value)
+        end
+    end
+
+    local function setFromX(x)
+        local pct = math.clamp((x - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1)
+        local rawValue = min + (max - min) * pct
+        setValue(rawValue)
+    end
+
+    bar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            setFromX(input.Position.X)
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch) then
+            setFromX(input.Position.X)
+        end
+    end)
+
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+
+    setValue(value)
+
+    self:RegisterThemeObject(label, {TextColor3 = "Text"})
+    self:RegisterThemeObject(valueLabel, {TextColor3 = "SubText"})
+    self:RegisterThemeObject(bar, {BackgroundColor3 = "Surface2"})
+    self:RegisterThemeObject(barStroke, {Color = "BorderSoft"})
+    self:RegisterThemeObject(fill, {BackgroundColor3 = "Accent"})
+    self.FlagObjects[flag] = {Type = "Slider", Set = setValue}
+
+    return {
+        Set = setValue,
+        Get = function() return value end,
+        Flag = flag,
+    }
+end
+
+function RuneUI:CreateSection(parent, title, icon)
+    local holder = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+    })
+
+    local cardBg = Create("Frame", {
+        Parent = holder,
+        Size = UDim2.new(1, 0, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundColor3 = Theme.Surface,
+        BorderSizePixel = 0,
+        ClipsDescendants = true,
+    })
+    Round(cardBg, 12)
+    local cardStroke = Stroke(cardBg, Theme.Border)
+    Padding(cardBg, 12, 12, 12, 12)
+
+    local header = Create("Frame", {
+        Parent = cardBg,
+        Size = UDim2.new(1, 0, 0, 24),
+        BackgroundTransparency = 1,
+    })
+
+    if icon then
+        local iconObj = Create("ImageLabel", {
+            Parent = header,
+            BackgroundTransparency = 1,
+            Size = UDim2.new(0, 16, 0, 16),
+            Position = UDim2.new(0, 0, 0, 4),
+            Image = icon,
+            ImageColor3 = Theme.Accent,
+        })
+        self:RegisterThemeObject(iconObj, {ImageColor3 = "Accent"})
+    end
+
+    local titleObj = Create("TextLabel", {
+        Parent = header,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, icon and 24 or 0, 0, 0),
+        Size = UDim2.new(1, -(icon and 24 or 0), 1, 0),
+        Font = Enum.Font.Code,
+        Text = title,
+        TextColor3 = Theme.Text,
+        TextSize = 18,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    local divider = Create("Frame", {
+        Parent = cardBg,
+        Position = UDim2.new(0, 0, 0, 32),
+        Size = UDim2.new(1, 0, 0, 1),
+        BackgroundColor3 = Theme.BorderSoft,
+        BorderSizePixel = 0,
+    })
+
+    local content = Create("Frame", {
+        Parent = cardBg,
+        Position = UDim2.new(0, 0, 0, 40),
+        Size = UDim2.new(1, 0, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+    })
+    ListLayout(content, 10)
+
+    self:RegisterThemeObject(card, {BackgroundColor3 = "Surface"})
+    self:RegisterThemeObject(cardStroke, {Color = "Border"})
+    self:RegisterThemeObject(titleObj, {TextColor3 = "Text"})
+    self:RegisterThemeObject(divider, {BackgroundColor3 = "BorderSoft"})
+
+    return holder, content
+end
+
+function RuneUI:AddBreak(parent, text)
+    local holder = Create("Frame", {
+        Parent = parent,
+        Name = "Break_" .. tostring(text or "Divider"),
+        Size = UDim2.new(1, 0, 0, 20),
+        BackgroundTransparency = 1,
+    })
+
+    local leftLine = Create("Frame", {
+        Parent = holder,
+        Name = "LeftLine",
+        AnchorPoint = Vector2.new(0, 0.5),
+        Position = UDim2.new(0, 0, 0.5, 0),
+        Size = UDim2.new(0.4, -6, 0, 1),
+        BackgroundColor3 = Theme.Border,
+        BorderSizePixel = 0,
+    })
+
+    local stroke = Create("UIStroke", {
+        Parent = leftLine,
+        Color = Theme.Accent,
+        Thickness = 0.6,
+        Transparency = 0.5
+    })
+
+    local title = Create("TextLabel", {
+        Parent = holder,
+        Name = "BreakText",
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(0, 120, 1, 0),
+        BackgroundTransparency = 1,
+        Font = Enum.Font.Code,
+        Text = text or "",
+        TextColor3 = Theme.Accent,
+        TextSize = 14,
+        TextXAlignment = Enum.TextXAlignment.Center,
+    })
+
+    local rightLine = Create("Frame", {
+        Parent = holder,
+        Name = "RightLine",
+        AnchorPoint = Vector2.new(1, 0.5),
+        Position = UDim2.new(1, 0, 0.5, 0),
+        Size = UDim2.new(0.4, -6, 0, 1),
+        BackgroundColor3 = Theme.Border,
+        BorderSizePixel = 0,
+    })
+
+    local stroke = Create("UIStroke", {
+        Parent = rightLine,
+        Color = Theme.Accent,
+        Thickness = 0.6,
+        Transparency = 0.5
+    })
+
+    -- theme support
+    self:RegisterThemeObject(leftLine, {BackgroundColor3 = "Border"})
+    self:RegisterThemeObject(rightLine, {BackgroundColor3 = "Border"})
+    self:RegisterThemeObject(title, {TextColor3 = "Accent"})
+
+    return holder
+end
+
+function RuneUI:CreateInfoLabel(parent, text)
+    local frame = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 38),
+        BackgroundColor3 = Theme.Surface2,
+        BorderSizePixel = 0,
+    })
+    Round(frame, 10)
+
+    local frameStroke = Stroke(frame, Theme.BorderSoft)
+    Padding(frame, 12, 12, 0, 0)
+
+    local label = Create("TextLabel", {
+        Parent = frame,
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Font = Enum.Font.Code,
+        Text = tostring(text or ""),
+        TextColor3 = Theme.Text,
+        TextSize = 15,
+        TextXAlignment = Enum.TextXAlignment.Left,
+    })
+
+    self:RegisterThemeObject(frame, {BackgroundColor3 = "Surface2"})
+    self:RegisterThemeObject(frameStroke, {Color = "BorderSoft"})
+    self:RegisterThemeObject(label, {TextColor3 = "Text"})
+
+    local function setText(v)
+        label.Text = tostring(v or "")
+    end
+
+    return {
+        Set = setText,
+        Get = function()
+            return label.Text
+        end,
+        Object = label,
+        Frame = frame,
+    }
+end
+
+function RuneUI:CreateTabBox(parent, tabNames, pageData)
+    local currentTab = 1
+    tabNames = tabNames or {"Tab 1", "Tab 2"}
+
+    local holder = Create("Frame", {
+        Parent = parent,
+        Size = UDim2.new(1, 0, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+    })
+
+    local body = Create("Frame", {
+        Parent = holder,
+        Position = UDim2.new(0, 0, 0, 0),
+        Size = UDim2.new(1, 0, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundColor3 = Theme.Surface,
+        BorderSizePixel = 0,
+        ClipsDescendants = true,
+    })
+    Create("UICorner", {
+        CornerRadius = UDim.new(0, 12),
+        Parent = body,
+    })
+    local bodyStroke = Stroke(body, Theme.Border)
+    Padding(body, 10, 10, 10, 10)
+
+    local tabBar = Create("Frame", {
+        Parent = body,
+        Position = UDim2.new(0, 0, 0, 0),
+        Size = UDim2.new(1, 0, 0, 28),
+        BackgroundTransparency = 1,
+    })
+
+    local tabLayout = ListLayout(tabBar, 6, true)
+    tabLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+
+    local divider = Create("Frame", {
+        Parent = body,
+        Position = UDim2.new(0, 0, 0, 34),
+        Size = UDim2.new(1, 0, 0, 1),
+        BackgroundColor3 = Theme.BorderSoft,
+        BorderSizePixel = 0,
+    })
+
+    local contentWrap = Create("Frame", {
+        Parent = body,
+        Position = UDim2.new(0, 0, 0, 44),
+        Size = UDim2.new(1, 0, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+    })
+
+    local tabs = {}
+
+    local function updateTabSizes()
+        local count = math.max(#tabNames, 1)
+        local spacing = tabLayout.Padding.Offset
+        local totalSpacing = spacing * (count - 1)
+        local widthScale = 1 / count
+        local widthOffset = -totalSpacing / count
+
+        for _, data in ipairs(tabs) do
+            data.Button.Size = UDim2.new(widthScale, widthOffset, 1, 0)
+        end
+    end
+
+    local function selectTab(index)
+        if self.OpenDropdowns then
+            for _, close in ipairs(self.OpenDropdowns) do
+                close()
+            end
+        end
+
+        currentTab = index
+
+        for i, data in ipairs(tabs) do
+            local active = i == index
+            data.Content.Visible = active
+            data.Button.BackgroundColor3 = active and Theme.AccentDark or Theme.Surface2
+            data.Button.TextColor3 = active and Theme.Text or Theme.SubText
+            data.Underline.Visible = active
+        end
+    end
+
+    for i, name in ipairs(tabNames) do
+        local btn = Create("TextButton", {
+            Parent = tabBar,
+            Size = UDim2.new(0.5, -3, 1, 0),
+            BackgroundColor3 = Theme.Surface2,
+            BorderSizePixel = 0,
+            Text = tostring(name),
+            Font = Enum.Font.Code,
+            TextColor3 = Theme.SubText,
+            TextSize = 14,
+            AutoButtonColor = false,
+            TextTruncate = Enum.TextTruncate.AtEnd,
+        })
+        Round(btn, 6)
+        local st = Stroke(btn, Theme.BorderSoft)
+
+        local underline = Create("Frame", {
+            Parent = btn,
+            AnchorPoint = Vector2.new(0.5, 1),
+            Position = UDim2.new(0.5, 0, 1, 0),
+            Size = UDim2.new(1, 0, 0, 2),
+            BackgroundColor3 = Theme.Accent,
+            BorderSizePixel = 0,
+            Visible = false,
+        })
+
+        local content = Create("Frame", {
+            Parent = contentWrap,
+            Size = UDim2.new(1, 0, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            BackgroundTransparency = 1,
+            Visible = false,
+        })
+        ListLayout(content, 10)
+
+        self:RegisterThemeObject(btn, {BackgroundColor3 = "Surface2", TextColor3 = "SubText"})
+        self:RegisterThemeObject(st, {Color = "BorderSoft"})
+        self:RegisterThemeObject(underline, {BackgroundColor3 = "Accent"})
+
+        tabs[i] = {
+            Button = btn,
+            Underline = underline,
+            Content = content,
+            Name = tostring(name),
+            Select = function()
+                selectTab(i)
+            end,
+        }
+
+        btn.MouseButton1Click:Connect(function()
+            selectTab(i)
+        end)
+    end
+
+    updateTabSizes()
+
+    if #tabs > 0 then
+        selectTab(1)
+    end
+
+    self:RegisterThemeObject(body, {BackgroundColor3 = "Surface"})
+    self:RegisterThemeObject(bodyStroke, {Color = "Border"})
+    self:RegisterThemeObject(divider, {BackgroundColor3 = "BorderSoft"})
+
+    local tabBoxData = {
+        Holder = holder,
+        Tabs = tabs,
+        Body = body,
+        ContentWrap = contentWrap,
+        Refresh = function()
+            updateTabSizes()
+            selectTab(currentTab)
+        end,
+    }
+
+    if pageData then
+        pageData.TabBoxes = pageData.TabBoxes or {}
+        table.insert(pageData.TabBoxes, tabBoxData)
+    end
+
+    return holder, tabs
+end
+
+function RuneUI:CreatePage(name, icon)
+    local pageButton = Create("TextButton", {
+        Parent = self.SidebarList,
+        Size = UDim2.new(1, 0, 0, 42),
+        BackgroundColor3 = Theme.Background2,
+        BorderSizePixel = 0,
+        Text = "",
+        AutoButtonColor = false,
+    })
+    Round(pageButton, 10)
+    local pageStroke = Stroke(pageButton, Theme.BorderSoft)
+    AddHover(pageButton, {BackgroundColor3 = Theme.Surface}, {BackgroundColor3 = Theme.Background2})
+
+    local pageIcon = Create("ImageLabel", {
+        Parent = pageButton,
+        BackgroundTransparency = 1,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(0, 26, 0, 26),
+        Image = icon or Assets.Farm,
+    })
+    local page = Create("ScrollingFrame", {
+        Parent = self.PageHolder,
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        CanvasSize = UDim2.new(),
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+        ScrollBarThickness = isMobile and 3 or 0,
+        Visible = false,
+    })
+
+    local columns = Create("Frame", {
+        Parent = page,
+        Size = UDim2.new(1, 0, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+    })
+
+    local left, right
+
+    if isMobile then
+        -- stack vertically on mobile
+        ListLayout(columns, 12)
+
+        left = Create("Frame", {
+            Parent = columns,
+            Size = UDim2.new(1, 0, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            BackgroundTransparency = 1,
+        })
+        ListLayout(left, 12)
+
+        right = Create("Frame", {
+            Parent = columns,
+            Size = UDim2.new(1, 0, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            BackgroundTransparency = 1,
+        })
+        ListLayout(right, 12)
+    else
+        -- side by side on desktop
+        left = Create("Frame", {
+            Parent = columns,
+            Size = UDim2.new(0.5, -6, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            BackgroundTransparency = 1,
+        })
+        ListLayout(left, 12)
+
+        right = Create("Frame", {
+            Parent = columns,
+            Position = UDim2.new(0.5, 6, 0, 0),
+            Size = UDim2.new(0.5, -6, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            BackgroundTransparency = 1,
+        })
+        ListLayout(right, 12)
+    end
+
+    local pageData = {
+        Name = name,
+        Button = pageButton,
+        Icon = pageIcon,
+        Frame = page,
+        Left = left,
+        Right = right,
+        TabBoxes = {},
+    }
+
+    self:RegisterThemeObject(pageButton, {BackgroundColor3 = "Background2"})
+    self:RegisterThemeObject(pageStroke, {Color = "BorderSoft"})
+    self:RegisterThemeObject(pageIcon, {ImageColor3 = "SubText"})
+
+    pageButton.MouseButton1Click:Connect(function()
+        self:OpenPage(pageData)
+    end)
+
+    table.insert(self.Pages, pageData)
+    if #self.Pages == 1 then
+        self:OpenPage(pageData)
+    end
+
+    return pageData
+end
+
+function RuneUI:OpenPage(pageData)
+    if self.OpenDropdowns then
+        for _, close in ipairs(self.OpenDropdowns) do
+            close()
+        end
+    end
+
+    for _, pg in ipairs(self.Pages) do
+        pg.Frame.Visible = false
+        TweenService:Create(pg.Button, TweenInfo.new(0.12), {
+            BackgroundColor3 = Theme.Background2
+        }):Play()
+        TweenService:Create(pg.Icon, TweenInfo.new(0.12), {
+            ImageColor3 = Theme.SubText
+        }):Play()
+    end
+
+    pageData.Frame.Visible = true
+    TweenService:Create(pageData.Button, TweenInfo.new(0.12), {
+        BackgroundColor3 = Theme.Surface
+    }):Play()
+    TweenService:Create(pageData.Icon, TweenInfo.new(0.12), {
+        ImageColor3 = Theme.Accent
+    }):Play()
+
+    self.CurrentPage = pageData
+end
+
+function RuneUI:RegisterSearchEntry(name, pageData, tabIndex, aliases)
+    local entry = {
+        Name = tostring(name),
+        Lower = string.lower(tostring(name)),
+        Page = pageData,
+        TabIndex = tabIndex,
+        Aliases = {},
+    }
+
+    for _, alias in ipairs(aliases or {}) do
+        table.insert(entry.Aliases, string.lower(tostring(alias)))
+    end
+
+    table.insert(self.SearchEntries, entry)
+end
+
+function RuneUI:SetSearchResultsVisible(isVisible)
+    if not self.SearchResultsFrame then
+        return
+    end
+
+    self.SearchResultsFrame.Visible = isVisible == true
+end
+
+function RuneUI:ShowSearchResults(matches)
+    for _, child in ipairs(self.SearchResultsList:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+
+    if not matches or #matches == 0 then
+        self:SetSearchResultsVisible(false)
+        return
+    end
+
+    self:SetSearchResultsVisible(true)
+
+    for i, entry in ipairs(matches) do
+        if i > 8 then
+            break
+        end
+
+        local button = Create("TextButton", {
+            Parent = self.SearchResultsList,
+            Size = UDim2.new(1, 0, 0, 28),
+            BackgroundColor3 = Theme.Surface2,
+            BorderSizePixel = 0,
+            Text = entry.Name,
+            Font = Enum.Font.Code,
+            TextColor3 = Theme.Text,
+            TextSize = 14,
+            AutoButtonColor = false,
+            ZIndex = 52,
+        })
+        Round(button, 6)
+        local st = Stroke(button, Theme.BorderSoft)
+        AddHover(button, {BackgroundColor3 = Theme.Surface}, {BackgroundColor3 = Theme.Surface2})
+        self:RegisterThemeObject(button, {BackgroundColor3 = "Surface2", TextColor3 = "Text"})
+        self:RegisterThemeObject(st, {Color = "BorderSoft"})
+
+        button.MouseButton1Click:Connect(function()
+            self.SearchBox.Text = entry.Name
+            self:SetSearchResultsVisible(false)
+
+            if entry.Page then
+                self:OpenPage(entry.Page)
+            end
+
+            if entry.TabIndex and entry.Page and entry.Page.TabBoxes then
+                for _, tabBox in ipairs(entry.Page.TabBoxes) do
+                    local tab = tabBox.Tabs[entry.TabIndex]
+                    if tab and tab.Select then
+                        if self.OpenDropdowns then
+                            for _, close in ipairs(self.OpenDropdowns) do
+                                close()
+                            end
+                        end
+                        tab.Select()
+                        break
+                    end
+                end
+            end
+
+            self:Notify("Search", "Jumped to: " .. entry.Name, 2)
+        end)
+    end
+end
+
+function RuneUI:RunSearch(query)
+    query = string.lower(tostring(query or ""))
+    query = query:gsub("^%s+", ""):gsub("%s+$", "")
+
+    if query == "" then
+        self:ShowSearchResults({})
+        return nil
+    end
+
+    local matches = {}
+
+    for _, entry in ipairs(self.SearchEntries) do
+        local matched = string.find(entry.Lower, query, 1, true) ~= nil
+        if not matched then
+            for _, alias in ipairs(entry.Aliases or {}) do
+                if string.find(alias, query, 1, true) then
+                    matched = true
+                    break
+                end
+            end
+        end
+        if matched then
+            table.insert(matches, entry)
+        end
+    end
+
+    self:ShowSearchResults(matches)
+
+    if #matches == 0 then
+        return nil
+    end
+
+    return matches
+end
+
+function RuneUI:ApplyFlags(flagTable)
+    for k, v in pairs(flagTable or {}) do
+        Flags[k] = v
+        local obj = self.FlagObjects[k]
+        if obj and obj.Set then
+            obj.Set(v)
+        end
+    end
+end
+
+function RuneUI:Destroy()
+    if self.ScreenGui then
+        self.ScreenGui:Destroy()
+    end
+end
+
+function BuildWindow()
+    local self = setmetatable({}, RuneUI)
+    self.Pages = {}
+    self.SearchEntries = {}
+    self.FlagObjects = {}
+    self.ThemeObjects = {}
+
+    local old = CoreGui:FindFirstChild("Rune Hub")
+    if old then
+        old:Destroy()
+    end
+
+    local gui = Create("ScreenGui", {
+        Name = "Rune Hub",
+        Parent = CoreGui,
+        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        IgnoreGuiInset = true,
+        ResetOnSpawn = false,
+    })
+    self.ScreenGui = gui
+
+    local root = Create("Frame", {
+        Parent = gui,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(0.95, 0, 0.85, 0),
+        BackgroundColor3 = Theme.Background,
+        BorderSizePixel = 0,
+        ClipsDescendants = true,
+    })
+    self.Root = root
+    Round(root, 14)
+    local rootStroke = Stroke(root, Theme.Border)
+    self:RegisterThemeObject(root, {BackgroundColor3 = "Background"})
+    self:RegisterThemeObject(rootStroke, {Color = "Border"})
+
+    local mainUi = root
+local uiOpen = true
+local uiBusy = false
+local savedTransparency = {}
+
+local toggleCircle = Create("TextButton", {
+    Parent = gui,
+    Size = UDim2.new(0, 48, 0, 48),
+    Position = UDim2.new(0, 8, 0.5, -24),
+    BackgroundColor3 = Color3.fromRGB(35, 34, 36),
+    BorderSizePixel = 0,
+    Text = "",
+    AutoButtonColor = false,
+    ZIndex = 200,
+})
+Round(toggleCircle, 999)
+local toggleCircleStroke = Stroke(toggleCircle, Theme.Border, 1.5)
+MakeDraggable(toggleCircle, toggleCircle)
+
+local toggleIcon = Create("ImageLabel", {
+    Parent = toggleCircle,
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.new(0.485, 0, 0.55, 0),
+    Size = UDim2.new(0, 38, 0, 38),
+    BackgroundTransparency = 1,
+    Image = Assets.Logo,
+    ImageColor3 = Color3.new(1, 1, 1),
+    ZIndex = 201,
+})
+
+local openSize = mainUi.Size
+local openPosition = mainUi.Position
+local closedPosition = UDim2.new(
+    openPosition.X.Scale,
+    openPosition.X.Offset,
+    openPosition.Y.Scale,
+    openPosition.Y.Offset + 40
+)
+
+local function vibrateCircle()
+    local startPos = toggleCircle.Position
+    local startRot = toggleIcon.Rotation
+
+    local shakeOffsets = {
+        UDim2.new(startPos.X.Scale, startPos.X.Offset - 3, startPos.Y.Scale, startPos.Y.Offset),
+        UDim2.new(startPos.X.Scale, startPos.X.Offset + 3, startPos.Y.Scale, startPos.Y.Offset),
+        UDim2.new(startPos.X.Scale, startPos.X.Offset - 2, startPos.Y.Scale, startPos.Y.Offset),
+        UDim2.new(startPos.X.Scale, startPos.X.Offset + 2, startPos.Y.Scale, startPos.Y.Offset),
+        startPos
+    }
+
+    local iconRots = {-10, 10, -6, 6, 0}
+
+    task.spawn(function()
+        for i = 1, #shakeOffsets do
+            TweenService:Create(toggleCircle, TweenInfo.new(0.035, Enum.EasingStyle.Linear), {
+                Position = shakeOffsets[i]
+            }):Play()
+
+            TweenService:Create(toggleIcon, TweenInfo.new(0.035, Enum.EasingStyle.Linear), {
+                Rotation = startRot + iconRots[i]
+            }):Play()
+
+            task.wait(0.035)
+        end
+    end)
+end
+
+local function cacheTransparency()
+    savedTransparency = {}
+
+    local function save(obj)
+        savedTransparency[obj] = {}
+
+        if obj:IsA("Frame") or obj:IsA("ScrollingFrame") or obj:IsA("TextButton") or obj:IsA("TextBox") or obj:IsA("ImageButton") or obj:IsA("ImageLabel") then
+            savedTransparency[obj].BackgroundTransparency = obj.BackgroundTransparency
+        end
+        if obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox") then
+            savedTransparency[obj].TextTransparency = obj.TextTransparency
+        end
+        if obj:IsA("ImageLabel") or obj:IsA("ImageButton") then
+            savedTransparency[obj].ImageTransparency = obj.ImageTransparency
+        end
+        if obj:IsA("UIStroke") then
+            savedTransparency[obj].Transparency = obj.Transparency
+        end
+    end
+
+    save(mainUi)
+    for _, obj in ipairs(mainUi:GetDescendants()) do
+        save(obj)
+    end
+end
+
+local function hideUi()
+    if uiBusy or not uiOpen then
+        return
+    end
+
+    -- Close any open dropdowns before hiding
+    if self.OpenDropdowns then
+        for _, close in ipairs(self.OpenDropdowns) do
+            close()
+        end
+    end
+
+    uiBusy = true
+    cacheTransparency()
+
+    TweenService:Create(mainUi, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        Size = UDim2.new(openSize.X.Scale, openSize.X.Offset, 0, 0),
+        Position = closedPosition,
+        BackgroundTransparency = 1
+    }):Play()
+
+    for _, obj in ipairs(mainUi:GetDescendants()) do
+        if obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox") then
+            TweenService:Create(obj, TweenInfo.new(0.18), {
+                TextTransparency = 1
+            }):Play()
+        end
+
+        if obj:IsA("ImageLabel") or obj:IsA("ImageButton") then
+            TweenService:Create(obj, TweenInfo.new(0.18), {
+                ImageTransparency = 1
+            }):Play()
+        end
+
+        if obj:IsA("Frame") or obj:IsA("ScrollingFrame") or obj:IsA("TextButton") or obj:IsA("TextBox") or obj:IsA("ImageButton") or obj:IsA("ImageLabel") then
+            TweenService:Create(obj, TweenInfo.new(0.18), {
+                BackgroundTransparency = 1
+            }):Play()
+        end
+
+        if obj:IsA("UIStroke") then
+            TweenService:Create(obj, TweenInfo.new(0.18), {
+                Transparency = 1
+            }):Play()
+        end
+    end
+
+    task.wait(0.26)
+    mainUi.Visible = false
+    uiOpen = false
+    uiBusy = false
+
+    vibrateCircle()
+end
+
+local function showUi()
+    if uiBusy or uiOpen then
+        return
+    end
+
+    uiBusy = true
+    mainUi.Visible = true
+    mainUi.Size = UDim2.new(openSize.X.Scale, openSize.X.Offset, 0, 0)
+    mainUi.Position = closedPosition
+    mainUi.BackgroundTransparency = 1
+
+    for obj, props in pairs(savedTransparency) do
+        if obj and obj.Parent then
+            if props.BackgroundTransparency ~= nil and (obj:IsA("Frame") or obj:IsA("ScrollingFrame") or obj:IsA("TextButton") or obj:IsA("TextBox") or obj:IsA("ImageButton") or obj:IsA("ImageLabel")) then
+                obj.BackgroundTransparency = 1
+            end
+            if props.TextTransparency ~= nil and (obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox")) then
+                obj.TextTransparency = 1
+            end
+            if props.ImageTransparency ~= nil and (obj:IsA("ImageLabel") or obj:IsA("ImageButton")) then
+                obj.ImageTransparency = 1
+            end
+            if props.Transparency ~= nil and obj:IsA("UIStroke") then
+                obj.Transparency = 1
+            end
+        end
+    end
+
+    TweenService:Create(mainUi, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        Size = openSize,
+        Position = openPosition,
+        BackgroundTransparency = savedTransparency[mainUi] and savedTransparency[mainUi].BackgroundTransparency or 0
+    }):Play()
+
+    for obj, props in pairs(savedTransparency) do
+        if obj and obj.Parent then
+            if props.BackgroundTransparency ~= nil and (obj:IsA("Frame") or obj:IsA("ScrollingFrame") or obj:IsA("TextButton") or obj:IsA("TextBox") or obj:IsA("ImageButton") or obj:IsA("ImageLabel")) then
+                TweenService:Create(obj, TweenInfo.new(0.22), {
+                    BackgroundTransparency = props.BackgroundTransparency
+                }):Play()
+            end
+            if props.TextTransparency ~= nil and (obj:IsA("TextLabel") or obj:IsA("TextButton") or obj:IsA("TextBox")) then
+                TweenService:Create(obj, TweenInfo.new(0.22), {
+                    TextTransparency = props.TextTransparency
+                }):Play()
+            end
+            if props.ImageTransparency ~= nil and (obj:IsA("ImageLabel") or obj:IsA("ImageButton")) then
+                TweenService:Create(obj, TweenInfo.new(0.22), {
+                    ImageTransparency = props.ImageTransparency
+                }):Play()
+            end
+            if props.Transparency ~= nil and obj:IsA("UIStroke") then
+                TweenService:Create(obj, TweenInfo.new(0.22), {
+                    Transparency = props.Transparency
+                }):Play()
+            end
+        end
+    end
+
+    task.wait(0.26)
+    uiOpen = true
+    uiBusy = false
+
+    TweenService:Create(toggleIcon, TweenInfo.new(0.15), {
+        Rotation = 0
+    }):Play()
+end
+
+toggleCircle.MouseButton1Click:Connect(function()
+    if uiOpen then
+        hideUi()
+    else
+        showUi()
+    end
+end)
+
+self.ToggleUi = function()
+    if uiOpen then
+        hideUi()
+    else
+        showUi()
+    end
+end
+
+self.HideUi = hideUi
+self.ShowUi = showUi
+
+    local sidebar = Create("Frame", {
+        Parent = root,
+        Size = UDim2.new(0, 58, 1, 0),
+        BackgroundColor3 = Theme.Background2,
+        BorderSizePixel = 0,
+    })
+
+    Round(sidebar, 14)
+    local sidebarStroke = Stroke(sidebar, Theme.BorderSoft)
+    self:RegisterThemeObject(sidebar, {BackgroundColor3 = "Background2"})
+    self:RegisterThemeObject(sidebarStroke, {Color = "BorderSoft"})
+
+    local logoHolder = Create("Frame", {
+        Parent = sidebar,
+        Size = UDim2.new(1, 0, 0, 60),
+        BackgroundTransparency = 1,
+    })
+
+    local logo = Create("ImageLabel", {
+        Parent = logoHolder,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(0, 44, 0, 44),
+        BackgroundTransparency = 1,
+        Image = Assets.Logo,
+    })
+
+    local sidebarList = Create("Frame", {
+        Parent = sidebar,
+        Position = UDim2.new(0, 6, 0, 78),
+        Size = UDim2.new(1, -12, 1, -88),
+        BackgroundTransparency = 1,
+    })
+
+
+    ListLayout(sidebarList, 10)
+    self.SidebarList = sidebarList
+
+    local contentWrap = Create("Frame", {
+        Parent = root,
+        Position = UDim2.new(0, 58, 0, 0),
+        Size = UDim2.new(1, -58, 1, 0),
+        BackgroundTransparency = 1,
+    })
+
+    local topbar = Create("Frame", {
+        Parent = contentWrap,
+        Size = UDim2.new(1, 0, 0, 62),
+        BackgroundTransparency = 1,
+    })
+    MakeDraggable(topbar, root, function()
+        if self.OpenDropdowns then
+            for _, close in ipairs(self.OpenDropdowns) do
+                close()
+            end
+        end
+    end)
+
+    local search = Create("TextBox", {
+        Parent = topbar,
+        Position = UDim2.new(0, 18, 0, 12),
+        Size = UDim2.new(1, -84, 0, 38),
+        BackgroundColor3 = Theme.Surface,
+        BorderSizePixel = 0,
+        PlaceholderText = "Search features",
+        Text = "",
+        Font = Enum.Font.Code,
+        TextSize = 16,
+        TextColor3 = Theme.Text,
+        PlaceholderColor3 = Theme.Placeholder,
+        ClearTextOnFocus = false,
+    })
+    Round(search, 10)
+    local searchStroke = Stroke(search, Theme.Border)
+    Padding(search, 34, 12, 0, 0)
+    self.SearchBox = search
+    self:RegisterThemeObject(search, {BackgroundColor3 = "Surface", TextColor3 = "Text", PlaceholderColor3 = "Placeholder"})
+    self:RegisterThemeObject(searchStroke, {Color = "Border"})
+
+    local searchResultsFrame = Create("Frame", {
+        Parent = gui,
+        Position = UDim2.new(0, 90, 0, 54),
+        Size = UDim2.new(0, 0, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundColor3 = Theme.Surface,
+        BorderSizePixel = 0,
+        Visible = false,
+        ZIndex = 50,
+        ClipsDescendants = true,
+    })
+    Round(searchResultsFrame, 10)
+    local searchResultsStroke = Stroke(searchResultsFrame, Theme.Border)
+    Padding(searchResultsFrame, 10, 10, 10, 10)
+    self:RegisterThemeObject(searchResultsFrame, {BackgroundColor3 = "Surface"})
+    self:RegisterThemeObject(searchResultsStroke, {Color = "Border"})
+
+    local searchResultsList = Create("Frame", {
+        Parent = searchResultsFrame,
+        Size = UDim2.new(1, 0, 0, 0),
+        AutomaticSize = Enum.AutomaticSize.Y,
+        BackgroundTransparency = 1,
+        ZIndex = 51,
+    })
+    ListLayout(searchResultsList, 6)
+    self.SearchResultsFrame = searchResultsFrame
+    self.SearchResultsList = searchResultsList
+
+    local searchIcon = Create("ImageLabel", {
+        Parent = search,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 10, 0.5, -8),
+        Size = UDim2.new(0, 16, 0, 16),
+        Image = Assets.Search,
+        ImageColor3 = Theme.SubText,
+    })
+    self:RegisterThemeObject(searchIcon, {ImageColor3 = "SubText"})
+
+    local pageHolder = Create("Frame", {
+        Parent = contentWrap,
+        Position = UDim2.new(0, 18, 0, 62),
+        Size = UDim2.new(1, -36, 1, -96),
+        BackgroundTransparency = 1,
+        ClipsDescendants = not isMobile,
+    })
+    Round(pageHolder, 12)
+    self.PageHolder = pageHolder
+    self:SetSearchResultsVisible(false)
+
+    local footer = Create("Frame", {
+        Parent = contentWrap,
+        AnchorPoint = Vector2.new(0, 1),
+        Position = UDim2.new(0, 18, 1, -8),
+        Size = UDim2.new(1, -36, 0, 20),
+        BackgroundTransparency = 1,
+    })
+
+    local gameName = "example"
+    pcall(function()
+        gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
+    end)
+
+    local footerText = Create("TextLabel", {
+        Parent = footer,
+        BackgroundTransparency = 1,
+        Size = UDim2.new(1, 0, 1, 0),
+        Font = Enum.Font.Code,
+        Text = "discord.gg/uJNnCEEbPy | v1.0 | Game: " .. gameName,
+        TextColor3 = Theme.SubText,
+        TextSize = 14,
+        TextXAlignment = Enum.TextXAlignment.Center,
+    })
+    self:RegisterThemeObject(footerText, {TextColor3 = "SubText"})
+
+    local notifHolder = Create("Frame", {
+        Parent = gui,
+        AnchorPoint = Vector2.new(1, 1),
+        Position = UDim2.new(1, -16, 1, -16),
+        Size = UDim2.new(0, 280, 0, 240),
+        BackgroundTransparency = 1,
+    })
+    ListLayout(notifHolder, 8)
+    self.NotificationHolder = notifHolder
+
+    root.Size = UDim2.new(0.95, 0, 0, 0)
+    root.BackgroundTransparency = 1
+    TweenService:Create(root, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
+        Size = UDim2.new(0.95, 0, 0.85, 0),
+        BackgroundTransparency = 0,
+    }):Play()
+
+    search:GetPropertyChangedSignal("Text"):Connect(function()
+        local text = search.Text or ""
+        if text == "" then
+            self:SetSearchResultsVisible(false)
+            return
+        end
+
+        local absPos = search.AbsolutePosition
+        local absSize = search.AbsoluteSize
+        self.SearchResultsFrame.Position = UDim2.fromOffset(absPos.X, absPos.Y + absSize.Y + 4)
+        self.SearchResultsFrame.Size = UDim2.new(0, absSize.X, 0, 0)
+        self:RunSearch(text)
+    end)
+
+    search.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            local matches = self:RunSearch(search.Text)
+            if matches and matches[1] then
+                local entry = matches[1]
+                if entry.Page then
+                    self:OpenPage(entry.Page)
+                end
+                if entry.TabIndex and entry.Page and entry.Page.TabBoxes then
+                    for _, tabBox in ipairs(entry.Page.TabBoxes) do
+                        local tab = tabBox.Tabs[entry.TabIndex]
+                        if tab and tab.Select then
+                            if self.OpenDropdowns then
+                                for _, close in ipairs(self.OpenDropdowns) do
+                                    close()
+                                end
+                            end
+                            tab.Select()
+                            break
+                        end
+                    end
+                end
+                self:SetSearchResultsVisible(false)
+                self:Notify("Search", "Jumped to: " .. entry.Name, 2)
+            end
+        else
+            task.delay(0.1, function()
+                if self.SearchResultsFrame then
+                    self:SetSearchResultsVisible(false)
+                end
+            end)
+        end
+    end)
+
+    return self
+    
+end
+
+
+function SaveManager:Init(ui)
+    self.UI = ui
+    self.Folder = "RuneHubConfigs"
+    self.AutoLoadFile = self.Folder .. "/autoload.txt"
+
+    if makefolder and not isfolder(self.Folder) then
+        makefolder(self.Folder)
+    end
+end
+
+function SaveManager:GetConfigPath(name)
+    return self.Folder .. "/" .. tostring(name) .. ".json"
+end
+
+function SaveManager:ListConfigs()
+    if not listfiles or not isfolder or not isfolder(self.Folder) then
+        return {}
+    end
+
+    local out = {}
+    for _, path in ipairs(listfiles(self.Folder)) do
+        local name = path:match("([^\\/]+)$")
+        
+        if name and name ~= "autoload.txt" then -- 👈 FILTER IT HERE
+            name = name:gsub("%.json$", "")
+            table.insert(out, name)
+        end
+    end
+
+    table.sort(out, function(a, b)
+        return a:lower() < b:lower()
+    end)
+
+    return out
+end
+function SaveManager:Save(name)
+    if not writefile then
+        return false, "writefile unavailable"
+    end
+    if not name or name == "" then
+        return false, "missing config name"
+    end
+
+    local ok, encoded = pcall(function()
+        return HttpService:JSONEncode(Flags)
+    end)
+    if not ok then
+        return false, "encode failed"
+    end
+
+    writefile(self:GetConfigPath(name), encoded)
+    return true
+end
+
+function SaveManager:Load(name)
+    if not readfile or not isfile then
+        return false, "readfile unavailable"
+    end
+
+    local path = self:GetConfigPath(name)
+    if not isfile(path) then
+        return false, "config missing"
+    end
+
+    local ok, decoded = pcall(function()
+        return HttpService:JSONDecode(readfile(path))
+    end)
+    if not ok or type(decoded) ~= "table" then
+        return false, "decode failed"
+    end
+
+    if self.UI then
+        self.UI:ApplyFlags(decoded)
+    else
+        for k, v in pairs(decoded) do
+            Flags[k] = v
+        end
+    end
+
+    return true, decoded
+end
+
+function SaveManager:Delete(name)
+    if not delfile or not isfile then
+        return false, "delfile unavailable"
+    end
+
+    local path = self:GetConfigPath(name)
+    if not isfile(path) then
+        return false, "config missing"
+    end
+
+    delfile(path)
+    return true
+end
+
+function SaveManager:SetAutoload(name)
+    if not writefile then
+        return false, "writefile unavailable"
+    end
+    writefile(self.AutoLoadFile, tostring(name or ""))
+    return true
+end
+
+function SaveManager:GetAutoload()
+    if not readfile or not isfile or not isfile(self.AutoLoadFile) then
+        return nil
+    end
+
+    local ok, content = pcall(function()
+        return readfile(self.AutoLoadFile)
+    end)
+    if ok and content ~= "" then
+        return content
+    end
+
+    return nil
+end
+
+function RuneUI.new()
+    return BuildWindow()
+end
+
+RuneUI.SaveManager = SaveManager
+RuneUI.ThemePresets = ThemePresets
+RuneUI.Assets = Assets
+
+return RuneUI
+
+
