@@ -2316,15 +2316,20 @@ self.ShowUi = showUi
         Image = Assets.Logo,
     })
 
-    local sidebarList = Create("Frame", {
+    local sidebarListClass = isMobile and "ScrollingFrame" or "Frame"
+    local sidebarList = Create(sidebarListClass, {
         Parent = sidebar,
-        Position = UDim2.new(0, 6, 0, 78),
-        Size = UDim2.new(1, -12, 1, -88),
+        Position = UDim2.new(0, isMobile and 4 or 6, 0, isMobile and 52 or 78),
+        Size = UDim2.new(1, isMobile and -8 or -12, 1, isMobile and -60 or -88),
         BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        ScrollBarThickness = 0,
+        ScrollingDirection = Enum.ScrollingDirection.Y,
+        CanvasSize = UDim2.new(0, 0, 0, 0),
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+        ClipsDescendants = true,
     })
-
-
-    ListLayout(sidebarList, 10)
+    ListLayout(sidebarList, isMobile and 6 or 10)
     self.SidebarList = sidebarList
 
     local contentWrap = Create("Frame", {
