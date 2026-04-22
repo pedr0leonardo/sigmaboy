@@ -292,6 +292,7 @@ local Assets = {
     Settings2 = "rbxassetid://80758916183665",
     globe = "rbxassetid://114238209622913",
     key = "rbxassetid://83619031955390",
+    lock = "rbxassetid://134724289526879",
 }
 
 local function Create(className, props)
