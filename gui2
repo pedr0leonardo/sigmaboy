@@ -2323,12 +2323,16 @@ self.ShowUi = showUi
         Size = UDim2.new(1, isMobile and -8 or -12, 1, isMobile and -60 or -88),
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        ScrollBarThickness = isMobile and 3 or 0,
+
         ScrollingDirection = Enum.ScrollingDirection.Y,
         CanvasSize = UDim2.new(0, 0, 0, 0),
         AutomaticCanvasSize = Enum.AutomaticSize.Y,
         ClipsDescendants = true,
     })
+
+    if sidebarList:IsA("ScrollingFrame") then
+        sidebarList.ScrollBarThickness = isMobile and 3 or 0
+    end
     ListLayout(sidebarList, isMobile and 6 or 10)
     self.SidebarList = sidebarList
 
