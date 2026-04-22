@@ -2331,8 +2331,12 @@ self.ShowUi = showUi
     })
 
     if sidebarList:IsA("ScrollingFrame") then
-        sidebarList.ScrollBarThickness = isMobile and 3 or 0
+        if isMobile then
+            sidebarList.ScrollBarThickness = 3
+        end
+    else
     end
+
     ListLayout(sidebarList, isMobile and 6 or 10)
     self.SidebarList = sidebarList
 
