@@ -2333,6 +2333,7 @@ self.ShowUi = showUi
             sidebarList.AutomaticCanvasSize = Enum.AutomaticSize.Y
             sidebarList.ScrollingDirection = Enum.ScrollingDirection.Y
         end
+    else
     end
 
     ListLayout(sidebarList, isMobile and 6 or 10)
