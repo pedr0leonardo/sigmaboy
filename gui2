@@ -2330,10 +2330,9 @@ self.ShowUi = showUi
     if sidebarList:IsA("ScrollingFrame") then
         if isMobile then
             sidebarList.ScrollBarThickness = 3
-            AutomaticCanvasSize = Enum.AutomaticSize.Y,
-            ScrollingDirection = Enum.ScrollingDirection.Y,
+            sidebarList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+            sidebarList.ScrollingDirection = Enum.ScrollingDirection.Y
         end
-    else
     end
 
     ListLayout(sidebarList, isMobile and 6 or 10)
