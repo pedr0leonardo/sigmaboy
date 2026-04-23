@@ -2053,7 +2053,7 @@ function BuildWindow()
     self:RegisterThemeObject(rootStroke, {Color = "Border"})
 
     local mainUi = root
-local windowSize = isMobile and UDim2.new(0.5, 0, 0.5, 0) or UDim2.new(0, 1000, 0, 600)
+local windowSize = isMobile and UDim2.new(0.5, 0, 0.5, 0) or UDim2.new(0, 1000, 0, 730)
 root.Size = windowSize
 local uiOpen = true
 local uiBusy = false
