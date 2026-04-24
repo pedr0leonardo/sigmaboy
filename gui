@@ -284,8 +284,9 @@ local function Create(className, props)
     return obj
 end
 
-local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/Icons/refs/heads/main/lucide/dist/Icons.lua"))()
-Icons.Init(Create) -- VERY IMPORTANT
+local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/Icons/main/Main-v2.lua"))()
+
+Icons.Init(Create)
 Icons.SetIconsType("lucide")
 
 local Assets = {
@@ -313,32 +314,6 @@ local Assets = {
     key = "rbxassetid://83619031955390",
     lock = "rbxassetid://134724289526879",
 }
-
-local function GetIcon(name)
-    if typeof(name) ~= "string" then
-        return name
-    end
-
-    local icon = Icons.GetIcon(name) -- ✅ use module properly
-
-    if icon then
-        return icon
-    end
-
-    -- fallback to assets
-    local lower = string.lower(name)
-
-    if Assets[name] then
-        return Assets[name]
-    end
-
-    if Assets[lower] then
-        return Assets[lower]
-    end
-
-    warn("Missing icon:", name)
-    return Assets.chevron or "rbxassetid://6031091004"
-end
 
 local function Round(obj, radius)
     Create("UICorner", {
@@ -527,7 +502,7 @@ function RuneUI:Notify(title, text, duration)
     })
     Round(accent, 2)
 
-    self:RegisterThemeObject(cardBg, {BackgroundColor3 = "Surface"})
+    self:RegisterThemeObject(card, {BackgroundColor3 = "Surface"})
     self:RegisterThemeObject(cardStroke, {Color = "Border"})
     self:RegisterThemeObject(titleObj, {TextColor3 = "Text"})
     self:RegisterThemeObject(descObj, {TextColor3 = "SubText"})
@@ -875,13 +850,19 @@ function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
+    local arrowData = Icons.Icon2("chevron-down")
+
     local arrow = Create("ImageLabel", {
         Parent = main,
         BackgroundTransparency = 1,
         AnchorPoint = Vector2.new(1, 0.5),
         Position = UDim2.new(1, -10, 0.5, 0),
         Size = UDim2.new(0, 14, 0, 14),
-        Image = GetIcon("chevron"),
+
+        Image = arrowData[1],
+        ImageRectSize = arrowData[2].ImageRectSize,
+        ImageRectOffset = arrowData[2].ImageRectPosition,
+
         ImageColor3 = Theme.SubText,
     })
 
@@ -1068,13 +1049,19 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
         TextTruncate = Enum.TextTruncate.AtEnd,
     })
 
+    local arrowData = Icons.Icon2("chevron-down")
+
     local arrow = Create("ImageLabel", {
         Parent = main,
         BackgroundTransparency = 1,
         AnchorPoint = Vector2.new(1, 0.5),
         Position = UDim2.new(1, -10, 0.5, 0),
         Size = UDim2.new(0, 14, 0, 14),
-        Image = GetIcon("chevron"),
+
+        Image = arrowData[1],
+        ImageRectSize = arrowData[2].ImageRectSize,
+        ImageRectOffset = arrowData[2].ImageRectPosition,
+
         ImageColor3 = Theme.SubText,
     })
 
@@ -1451,14 +1438,29 @@ function RuneUI:CreateSection(parent, title, icon)
     })
 
     if icon then
+        local iconData = Icons.Icon2(icon)
+
+        local imageId, rectSize, rectPos
+
+        if iconData then
+            imageId = iconData[1]
+            rectSize = iconData[2].ImageRectSize
+            rectPos = iconData[2].ImageRectPosition
+        end
+
         local iconObj = Create("ImageLabel", {
             Parent = header,
             BackgroundTransparency = 1,
             Size = UDim2.new(0, 16, 0, 16),
             Position = UDim2.new(0, 0, 0, 4),
-            Image = GetIcon(icon),
+
+            Image = imageId,
+            ImageRectSize = rectSize,
+            ImageRectOffset = rectPos,
+
             ImageColor3 = Theme.Accent,
         })
+
         self:RegisterThemeObject(iconObj, {ImageColor3 = "Accent"})
     end
 
@@ -1491,7 +1493,7 @@ function RuneUI:CreateSection(parent, title, icon)
     })
     ListLayout(content, 10)
 
-    self:RegisterThemeObject(cardBg, {BackgroundColor3 = "Surface"})
+    self:RegisterThemeObject(card, {BackgroundColor3 = "Surface"})
     self:RegisterThemeObject(cardStroke, {Color = "Border"})
     self:RegisterThemeObject(titleObj, {TextColor3 = "Text"})
     self:RegisterThemeObject(divider, {BackgroundColor3 = "BorderSoft"})
@@ -1784,7 +1786,16 @@ function RuneUI:CreatePage(name, icon)
     Round(pageButton, 10)
     local pageStroke = Stroke(pageButton, Theme.BorderSoft)
     AddHover(pageButton, {BackgroundColor3 = Theme.Surface}, {BackgroundColor3 = Theme.Background2})
-    local iconId = GetIcon(icon)
+    local iconData = Icons.Icon2(icon)
+
+    local imageId = Assets.farm
+    local rectSize, rectPos
+
+    if iconData then
+        imageId = iconData[1]
+        rectSize = iconData[2].ImageRectSize
+        rectPos = iconData[2].ImageRectPosition
+    end
 
     local pageIcon = Create("ImageLabel", {
         Parent = pageButton,
@@ -1792,7 +1803,10 @@ function RuneUI:CreatePage(name, icon)
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = UDim2.new(0, 26, 0, 26),
-        Image = (iconId and iconId ~= "") and iconId or Assets.farm,
+
+        Image = imageId,
+        ImageRectSize = rectSize,
+        ImageRectOffset = rectPos,
     })
     local page = Create("ScrollingFrame", {
         Parent = self.PageHolder,
