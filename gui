@@ -1788,8 +1788,7 @@ function RuneUI:CreatePage(name, icon)
     AddHover(pageButton, {BackgroundColor3 = Theme.Surface}, {BackgroundColor3 = Theme.Background2})
     local iconData = Icons.Icon2(icon)
 
-    local imageId = Assets.farm
-    local rectSize, rectPos
+    local imageId, rectSize, rectPos
 
     if iconData then
         imageId = iconData[1]
@@ -1807,6 +1806,8 @@ function RuneUI:CreatePage(name, icon)
         Image = imageId,
         ImageRectSize = rectSize,
         ImageRectOffset = rectPos,
+
+        ImageColor3 = Theme.SubText,
     })
     local page = Create("ScrollingFrame", {
         Parent = self.PageHolder,
