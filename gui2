@@ -299,7 +299,7 @@ local Assets = {
 
 local function GetIcon(name)
     if typeof(name) ~= "string" then
-        return name -- already an asset id
+        return name
     end
 
     -- try lucide
@@ -308,10 +308,10 @@ local function GetIcon(name)
     end)
 
     if ok and typeof(icon) == "string" then
-        return icon -- ✅ lucide returns rbxassetid
+        return icon
     end
 
-    -- fallback to your assets
+    -- try assets (case safe)
     if Assets[name] then
         return Assets[name]
     end
@@ -320,8 +320,8 @@ local function GetIcon(name)
         return Assets[string.lower(name)]
     end
 
-    -- final fallback (prevents crashes)
-    return ""
+    -- ✅ FINAL FALLBACK (VERY IMPORTANT)
+    return Assets.Chevron or "rbxassetid://6031091004"
 end
 
 local function Create(className, props)
