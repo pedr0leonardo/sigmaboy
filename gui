@@ -291,7 +291,7 @@ Icons.SetIconsType("lucide")
 
 local Assets = {
     logo = "rbxassetid://87227163199096",
-    home = "rbxassetid://6026568198",
+    home6 = "rbxassetid://6026568198",
     autofarm = "rbxassetid://81872698913435",
     cart = "rbxassetid://128420521375441",
     package = "rbxassetid://97261141732706",
@@ -308,7 +308,7 @@ local Assets = {
     player = "rbxassetid://6034509993",
     visual = "rbxassetid://6031075938",
     teleport = "rbxassetid://6035190846",
-    settings = "rbxassetid://6031280882",
+    settings5 = "rbxassetid://6031280882",
     settings2 = "rbxassetid://80758916183665",
     globe = "rbxassetid://114238209622913",
     key3 = "rbxassetid://83619031955390",
