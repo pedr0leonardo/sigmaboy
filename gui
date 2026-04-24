@@ -269,7 +269,24 @@ local ThemePresets = {
     },
 }
 
+local function Create(className, props)
+    local obj = Instance.new(className)
+
+    props = props or {}
+
+    -- ✅ set name automatically if not provided
+    obj.Name = props.Name or className
+
+    for k, v in pairs(props) do
+        obj[k] = v
+    end
+
+    return obj
+end
+
 local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/Icons/refs/heads/main/lucide/dist/Icons.lua"))()
+Icons.Init(Create) -- VERY IMPORTANT
+Icons.SetIconsType("lucide")
 
 local Assets = {
     logo = "rbxassetid://87227163199096",
@@ -302,42 +319,25 @@ local function GetIcon(name)
         return name
     end
 
-    local lower = string.lower(name)
+    local icon = Icons.GetIcon(name) -- ✅ use module properly
 
-    -- lucide lookup
-    local icon = Icons.Icons and Icons.Icons[lower]
-    if typeof(icon) == "string" then
+    if icon then
         return icon
     end
 
-    -- ✅ try exact match (for "Key", "Lock", etc.)
+    -- fallback to assets
+    local lower = string.lower(name)
+
     if Assets[name] then
         return Assets[name]
     end
 
-    -- ✅ try lowercase
     if Assets[lower] then
         return Assets[lower]
     end
 
-    -- fallback
     warn("Missing icon:", name)
-    return Assets.Chevron or "rbxassetid://6031091004"
-end
-
-local function Create(className, props)
-    local obj = Instance.new(className)
-
-    props = props or {}
-
-    -- ✅ set name automatically if not provided
-    obj.Name = props.Name or className
-
-    for k, v in pairs(props) do
-        obj[k] = v
-    end
-
-    return obj
+    return Assets.chevron or "rbxassetid://6031091004"
 end
 
 local function Round(obj, radius)
@@ -881,7 +881,7 @@ function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
         AnchorPoint = Vector2.new(1, 0.5),
         Position = UDim2.new(1, -10, 0.5, 0),
         Size = UDim2.new(0, 14, 0, 14),
-        Image = Assets.Chevron,
+        Image = GetIcon("chevron"),
         ImageColor3 = Theme.SubText,
     })
 
@@ -1074,7 +1074,7 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
         AnchorPoint = Vector2.new(1, 0.5),
         Position = UDim2.new(1, -10, 0.5, 0),
         Size = UDim2.new(0, 14, 0, 14),
-        Image = Assets.Chevron,
+        Image = GetIcon("chevron"),
         ImageColor3 = Theme.SubText,
     })
 
@@ -1784,6 +1784,7 @@ function RuneUI:CreatePage(name, icon)
     Round(pageButton, 10)
     local pageStroke = Stroke(pageButton, Theme.BorderSoft)
     AddHover(pageButton, {BackgroundColor3 = Theme.Surface}, {BackgroundColor3 = Theme.Background2})
+    local iconId = GetIcon(icon)
 
     local pageIcon = Create("ImageLabel", {
         Parent = pageButton,
@@ -1791,7 +1792,7 @@ function RuneUI:CreatePage(name, icon)
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = UDim2.new(0, 26, 0, 26),
-        Image = GetIcon(icon) or Assets.Farm,
+        Image = (iconId and iconId ~= "") and iconId or Assets.farm,
     })
     local page = Create("ScrollingFrame", {
         Parent = self.PageHolder,
