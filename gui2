@@ -299,18 +299,29 @@ local Assets = {
 
 local function GetIcon(name)
     if typeof(name) ~= "string" then
-        return name
+        return name -- already an asset id
     end
 
+    -- try lucide
     local ok, icon = pcall(function()
         return Icons:GetIcon(string.lower(name))
     end)
 
-    if ok and icon then
-        return icon
+    if ok and typeof(icon) == "string" then
+        return icon -- ✅ lucide returns rbxassetid
     end
 
-    return Assets[name] or Assets[string.lower(name)] or name
+    -- fallback to your assets
+    if Assets[name] then
+        return Assets[name]
+    end
+
+    if Assets[string.lower(name)] then
+        return Assets[string.lower(name)]
+    end
+
+    -- final fallback (prevents crashes)
+    return ""
 end
 
 local function Create(className, props)
