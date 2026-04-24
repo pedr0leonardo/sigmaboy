@@ -29,7 +29,7 @@ RuneUI.__index = RuneUI
 local Flags = {}
 local SaveManager = {}
 local screenSize = workspace.CurrentCamera.ViewportSize
-local isMobile = UserInputService.TouchEnabled and (screenSize.X < 700 or screenSize.Y < 500)
+isMobile = UserInputService.TouchEnabled and (screenSize.X < 700 or screenSize.Y < 500)
 
 local Theme = {
     Background = Color3.fromRGB(10, 10, 12),
@@ -269,6 +269,8 @@ local ThemePresets = {
     },
 }
 
+local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/Icons/refs/heads/main/lucide/dist/Icons.lua"))()
+
 local Assets = {
     Logo = "rbxassetid://87227163199096",
     Home = "rbxassetid://6026568198",
@@ -294,6 +296,20 @@ local Assets = {
     key = "rbxassetid://83619031955390",
     lock = "rbxassetid://134724289526879",
 }
+
+local function GetIcon(name)
+    -- try lucide first
+    local ok, icon = pcall(function()
+        return Icons:GetIcon(name)
+    end)
+
+    if ok and icon then
+        return icon
+    end
+
+    -- fallback to your assets
+    return Assets[name]
+end
 
 local function Create(className, props)
     local obj = Instance.new(className)
