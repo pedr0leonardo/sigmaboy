@@ -315,6 +315,29 @@ local Assets = {
     lock = "rbxassetid://134724289526879",
 }
 
+local function ResolveIcon(icon)
+    if typeof(icon) ~= "string" then
+        return nil
+    end
+
+    -- 🔥 try lucide (or other packs)
+    local iconData = Icons.Icon2(icon)
+    if iconData and iconData[1] then
+        return iconData[1], iconData[2]
+    end
+
+    -- 🔥 fallback to your asset table
+    local lower = string.lower(icon)
+    local asset = Assets[lower]
+
+    if asset then
+        return asset, nil
+    end
+
+    -- 🔥 final fallback (never nil)
+    return Assets.settings, nil
+end
+
 local function Round(obj, radius)
     Create("UICorner", {
         CornerRadius = UDim.new(0, radius or 8),
@@ -850,7 +873,7 @@ function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
-    local arrowData = Icons.Icon2("chevron-down")
+    local imageId, rectData = ResolveIcon("chevron-down")
 
     local arrow = Create("ImageLabel", {
         Parent = main,
@@ -859,9 +882,9 @@ function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
         Position = UDim2.new(1, -10, 0.5, 0),
         Size = UDim2.new(0, 14, 0, 14),
 
-        Image = arrowData[1],
-        ImageRectSize = arrowData[2].ImageRectSize,
-        ImageRectOffset = arrowData[2].ImageRectPosition,
+        Image = imageId,
+        ImageRectSize = rectData and rectData.ImageRectSize,
+        ImageRectOffset = rectData and rectData.ImageRectPosition,
 
         ImageColor3 = Theme.SubText,
     })
@@ -1049,7 +1072,7 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
         TextTruncate = Enum.TextTruncate.AtEnd,
     })
 
-    local arrowData = Icons.Icon2("chevron-down")
+    local imageId, rectData = ResolveIcon("chevron-down")
 
     local arrow = Create("ImageLabel", {
         Parent = main,
@@ -1058,9 +1081,9 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
         Position = UDim2.new(1, -10, 0.5, 0),
         Size = UDim2.new(0, 14, 0, 14),
 
-        Image = arrowData[1],
-        ImageRectSize = arrowData[2].ImageRectSize,
-        ImageRectOffset = arrowData[2].ImageRectPosition,
+        Image = imageId,
+        ImageRectSize = rectData and rectData.ImageRectSize,
+        ImageRectOffset = rectData and rectData.ImageRectPosition,
 
         ImageColor3 = Theme.SubText,
     })
@@ -1438,15 +1461,10 @@ function RuneUI:CreateSection(parent, title, icon)
     })
 
     if icon then
-        local iconData = Icons.Icon2(icon)
+        local imageId, rectData = ResolveIcon(icon)
 
-        local imageId, rectSize, rectPos
-
-        if iconData then
-            imageId = iconData[1]
-            rectSize = iconData[2].ImageRectSize
-            rectPos = iconData[2].ImageRectPosition
-        end
+        local rectSize = rectData and rectData.ImageRectSize
+        local rectPos = rectData and rectData.ImageRectPosition
 
         local iconObj = Create("ImageLabel", {
             Parent = header,
@@ -1493,7 +1511,7 @@ function RuneUI:CreateSection(parent, title, icon)
     })
     ListLayout(content, 10)
 
-    self:RegisterThemeObject(card, {BackgroundColor3 = "Surface"})
+    self:RegisterThemeObject(cardBg, {BackgroundColor3 = "Surface"})
     self:RegisterThemeObject(cardStroke, {Color = "Border"})
     self:RegisterThemeObject(titleObj, {TextColor3 = "Text"})
     self:RegisterThemeObject(divider, {BackgroundColor3 = "BorderSoft"})
@@ -1786,15 +1804,10 @@ function RuneUI:CreatePage(name, icon)
     Round(pageButton, 10)
     local pageStroke = Stroke(pageButton, Theme.BorderSoft)
     AddHover(pageButton, {BackgroundColor3 = Theme.Surface}, {BackgroundColor3 = Theme.Background2})
-    local iconData = Icons.Icon2(icon)
+    local imageId, rectData = ResolveIcon(icon)
 
-    local imageId, rectSize, rectPos
-
-    if iconData then
-        imageId = iconData[1]
-        rectSize = iconData[2].ImageRectSize
-        rectPos = iconData[2].ImageRectPosition
-    end
+    local rectSize = rectData and rectData.ImageRectSize
+    local rectPos = rectData and rectData.ImageRectPosition
 
     local pageIcon = Create("ImageLabel", {
         Parent = pageButton,
