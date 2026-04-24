@@ -298,17 +298,19 @@ local Assets = {
 }
 
 local function GetIcon(name)
-    -- try lucide first
+    if typeof(name) ~= "string" then
+        return name
+    end
+
     local ok, icon = pcall(function()
-        return Icons:GetIcon(name)
+        return Icons:GetIcon(string.lower(name))
     end)
 
     if ok and icon then
         return icon
     end
 
-    -- fallback to your assets
-    return Assets[name]
+    return Assets[name] or Assets[string.lower(name)] or name
 end
 
 local function Create(className, props)
@@ -1442,7 +1444,7 @@ function RuneUI:CreateSection(parent, title, icon)
             BackgroundTransparency = 1,
             Size = UDim2.new(0, 16, 0, 16),
             Position = UDim2.new(0, 0, 0, 4),
-            Image = icon,
+            Image = GetIcon(icon),
             ImageColor3 = Theme.Accent,
         })
         self:RegisterThemeObject(iconObj, {ImageColor3 = "Accent"})
@@ -1777,7 +1779,7 @@ function RuneUI:CreatePage(name, icon)
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = UDim2.new(0, 26, 0, 26),
-        Image = icon or Assets.Farm,
+        Image = GetIcon(icon) or Assets.Farm,
     })
     local page = Create("ScrollingFrame", {
         Parent = self.PageHolder,
