@@ -311,7 +311,7 @@ local Assets = {
     settings = "rbxassetid://6031280882",
     settings2 = "rbxassetid://80758916183665",
     globe = "rbxassetid://114238209622913",
-    Key = "rbxassetid://83619031955390",
+    key3 = "rbxassetid://83619031955390",
     lock = "rbxassetid://134724289526879",
 }
 
