@@ -272,29 +272,29 @@ local ThemePresets = {
 local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/Icons/refs/heads/main/lucide/dist/Icons.lua"))()
 
 local Assets = {
-    Logo = "rbxassetid://87227163199096",
-    Home = "rbxassetid://6026568198",
+    logo = "rbxassetid://87227163199096",
+    home = "rbxassetid://6026568198",
     autofarm = "rbxassetid://81872698913435",
     cart = "rbxassetid://128420521375441",
     package = "rbxassetid://97261141732706",
     sparkle = "rbxassetid://111044800239623",
     dice = "rbxassetid://81268120302865",
     repeat1 = "rbxassetid://121886242955173",
-    Folder = "rbxassetid://80846616596607",
+    folder = "rbxassetid://80846616596607",
     castle = "rbxassetid://119275077187784",
-    Search = "rbxassetid://6031154871",
-    Move = "rbxassetid://6031280882",
-    Chevron = "rbxassetid://6031091004",
-    Farm = "rbxassetid://6034509993",
-    Combat = "rbxassetid://6035047409",
-    Player = "rbxassetid://6034509993",
-    Visual = "rbxassetid://6031075938",
-    Teleport = "rbxassetid://6035190846",
-    Settings = "rbxassetid://6031280882",
-    Settings2 = "rbxassetid://80758916183665",
+    search = "rbxassetid://6031154871",
+    move = "rbxassetid://6031280882",
+    chevron = "rbxassetid://6031091004",
+    farm = "rbxassetid://6034509993",
+    combat = "rbxassetid://6035047409",
+    player = "rbxassetid://6034509993",
+    visual = "rbxassetid://6031075938",
+    teleport = "rbxassetid://6035190846",
+    settings = "rbxassetid://6031280882",
+    settings2 = "rbxassetid://80758916183665",
     globe = "rbxassetid://114238209622913",
-    Key = "rbxassetid://83619031955390",
-    Lock = "rbxassetid://134724289526879",
+    key = "rbxassetid://83619031955390",
+    lock = "rbxassetid://134724289526879",
 }
 
 local function GetIcon(name)
@@ -304,14 +304,25 @@ local function GetIcon(name)
 
     local lower = string.lower(name)
 
-    -- ✅ direct lookup (THIS is the fix)
+    -- lucide lookup
     local icon = Icons.Icons and Icons.Icons[lower]
     if typeof(icon) == "string" then
         return icon
     end
 
+    -- ✅ try exact match (for "Key", "Lock", etc.)
+    if Assets[name] then
+        return Assets[name]
+    end
+
+    -- ✅ try lowercase
+    if Assets[lower] then
+        return Assets[lower]
+    end
+
     -- fallback
-    return Assets[lower] or "rbxassetid://6031091004"
+    warn("Missing icon:", name)
+    return Assets.Chevron or "rbxassetid://6031091004"
 end
 
 local function Create(className, props)
