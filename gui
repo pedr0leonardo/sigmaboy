@@ -6,7 +6,7 @@
       - tab boxes
       - sections/cards
       - toggle, button, textbox, dropdown, slider
-      - notifications
+      - notificationsSize = UDim2.new(0, 980, 0, 620),
       - advanced search across the whole UI
       - config save/load/delete/refresh/overwrite/autoload
       - theme presets
@@ -28,6 +28,8 @@ RuneUI.__index = RuneUI
 
 local Flags = {}
 local SaveManager = {}
+local screenSize = workspace.CurrentCamera.ViewportSize
+isMobile = UserInputService.TouchEnabled and (screenSize.X < 700 or screenSize.Y < 500)
 
 local Theme = {
     Background = Color3.fromRGB(10, 10, 12),
@@ -36,8 +38,8 @@ local Theme = {
     Surface2 = Color3.fromRGB(24, 24, 29),
     Border = Color3.fromRGB(52, 52, 60),
     BorderSoft = Color3.fromRGB(36, 36, 43),
-    Accent = Color3.fromRGB(233, 151, 175),
-    AccentDark = Color3.fromRGB(187, 110, 136),
+    Accent = Color3.fromRGB(181, 122, 233),
+    AccentDark = Color3.fromRGB(142, 103, 246),
     Text = Color3.fromRGB(244, 244, 246),
     SubText = Color3.fromRGB(171, 171, 181),
     Placeholder = Color3.fromRGB(123, 123, 132),
@@ -267,6 +269,8 @@ local ThemePresets = {
     },
 }
 
+local Icons = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/Icons/refs/heads/main/lucide/dist/Icons.lua"))()
+
 local Assets = {
     Logo = "rbxassetid://87227163199096",
     Home = "rbxassetid://6026568198",
@@ -289,8 +293,26 @@ local Assets = {
     Settings = "rbxassetid://6031280882",
     Settings2 = "rbxassetid://80758916183665",
     globe = "rbxassetid://114238209622913",
-    key = "rbxassetid://83619031955390",
+    Key = "rbxassetid://83619031955390",
+    Lock = "rbxassetid://134724289526879",
 }
+
+local function GetIcon(name)
+    if typeof(name) ~= "string" then
+        return name
+    end
+
+    local lower = string.lower(name)
+
+    -- ✅ direct lookup (THIS is the fix)
+    local icon = Icons.Icons and Icons.Icons[lower]
+    if typeof(icon) == "string" then
+        return icon
+    end
+
+    -- fallback
+    return Assets[lower] or "rbxassetid://6031091004"
+end
 
 local function Create(className, props)
     local obj = Instance.new(className)
@@ -361,7 +383,8 @@ local function MakeDraggable(handle, target, onDrag)
     local dragStart, startPos
 
     handle.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
             startPos = target.Position
@@ -374,7 +397,8 @@ local function MakeDraggable(handle, target, onDrag)
     end)
 
     UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - dragStart
             target.Position = UDim2.new(
                 startPos.X.Scale,
@@ -382,7 +406,7 @@ local function MakeDraggable(handle, target, onDrag)
                 startPos.Y.Scale,
                 startPos.Y.Offset + delta.Y
             )
-            if onDrag then onDrag() end  -- 👈 fire reposition callback
+            if onDrag then onDrag() end
         end
     end)
 end
@@ -464,7 +488,7 @@ function RuneUI:Notify(title, text, duration)
         Font = Enum.Font.Code,
         Text = title,
         TextColor3 = Theme.Text,
-        TextSize = 16,
+        TextSize = isMobile and 13 or 16,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
@@ -478,7 +502,7 @@ function RuneUI:Notify(title, text, duration)
         Text = text,
         TextWrapped = true,
         TextColor3 = Theme.SubText,
-        TextSize = 14,
+        TextSize = isMobile and 13 or 16,
         TextXAlignment = Enum.TextXAlignment.Left,
         TextYAlignment = Enum.TextYAlignment.Top,
     })
@@ -492,7 +516,7 @@ function RuneUI:Notify(title, text, duration)
     })
     Round(accent, 2)
 
-    self:RegisterThemeObject(card, {BackgroundColor3 = "Surface"})
+    self:RegisterThemeObject(cardBg, {BackgroundColor3 = "Surface"})
     self:RegisterThemeObject(cardStroke, {Color = "Border"})
     self:RegisterThemeObject(titleObj, {TextColor3 = "Text"})
     self:RegisterThemeObject(descObj, {TextColor3 = "SubText"})
@@ -535,7 +559,7 @@ function RuneUI:CreateToggle(parent, title, default, callback, flag)
         Font = Enum.Font.Code,
         Text = title,
         TextColor3 = Theme.Text,
-        TextSize = 15,
+        TextSize = isMobile and 13 or 15,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
@@ -603,7 +627,7 @@ function RuneUI:CreateButton(parent, title, callback)
         Text = title,
         Font = Enum.Font.Code,
         TextColor3 = Theme.Text,
-        TextSize = 15,
+        TextSize = isMobile and 13 or 15,
         AutoButtonColor = false,
     })
     Round(btn, 8)
@@ -637,7 +661,7 @@ function RuneUI:CreateKeybind(parent, title, defaultKey, callback, flag)
         Font = Enum.Font.Code,
         Text = title,
         TextColor3 = Theme.Text,
-        TextSize = 15,
+        TextSize = isMobile and 13 or 15,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
@@ -651,7 +675,7 @@ function RuneUI:CreateKeybind(parent, title, defaultKey, callback, flag)
         Text = currentKey.Name,
         Font = Enum.Font.Code,
         TextColor3 = Theme.Text,
-        TextSize = 14,
+        TextSize = isMobile and 13 or 15,
         AutoButtonColor = false,
     })
     Round(button, 8)
@@ -739,7 +763,7 @@ function RuneUI:CreateTextbox(parent, title, placeholder, callback, flag)
         Font = Enum.Font.Code,
         Text = title,
         TextColor3 = Theme.Text,
-        TextSize = 15,
+        TextSize = isMobile and 13 or 15,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
@@ -754,7 +778,7 @@ function RuneUI:CreateTextbox(parent, title, placeholder, callback, flag)
         Text = "",
         TextColor3 = Theme.Text,
         PlaceholderColor3 = Theme.Placeholder,
-        TextSize = 15,
+        TextSize = isMobile and 13 or 15,
         ClearTextOnFocus = false,
     })
     Round(box, 8)
@@ -812,7 +836,7 @@ function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
         Font = Enum.Font.Code,
         Text = title,
         TextColor3 = Theme.Text,
-        TextSize = 15,
+        TextSize = isMobile and 13 or 15,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
@@ -836,7 +860,7 @@ function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
         Font = Enum.Font.Code,
         Text = tostring(selected),
         TextColor3 = Theme.Text,
-        TextSize = 15,
+        TextSize = isMobile and 13 or 15,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
@@ -905,7 +929,7 @@ function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
                 Text = tostring(option),
                 Font = Enum.Font.Code,
                 TextColor3 = Theme.Text,
-                TextSize = 14,
+                TextSize = isMobile and 13 or 14,
                 AutoButtonColor = false,
                 ZIndex = 5,
             })
@@ -943,10 +967,10 @@ function RuneUI:CreateDropdown(parent, title, options, default, callback, flag)
 
             listHolder.Position = UDim2.new(
                 0, absPos.X,
-                0, absPos.Y + absSize.Y + 64
+                0, absPos.Y + absSize.Y + (isMobile and 8 or 64)
             )
 
-            local maxHeight = 150 -- 👈 change this if you want
+            local maxHeight = 130 -- 👈 change this if you want
 
             listHolder.Size = UDim2.new(
                 0, absSize.X,
@@ -1004,7 +1028,7 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
         Font = Enum.Font.Code,
         Text = title,
         TextColor3 = Theme.Text,
-        TextSize = 15,
+        TextSize = isMobile and 13 or 15,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
@@ -1028,7 +1052,7 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
         Font = Enum.Font.Code,
         Text = "-----",
         TextColor3 = Theme.Text,
-        TextSize = 15,
+        TextSize = isMobile and 13 or 15,
         TextXAlignment = Enum.TextXAlignment.Left,
         TextTruncate = Enum.TextTruncate.AtEnd,
     })
@@ -1141,7 +1165,7 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
                 Font = Enum.Font.Code,
                 Text = option,
                 TextColor3 = Theme.Text,
-                TextSize = 14,
+                TextSize = isMobile and 13 or 14,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 ZIndex = 6,
             })
@@ -1186,11 +1210,11 @@ function RuneUI:CreateMultiDropdown(parent, title, options, default, callback, f
         if expanded then
             local absPos = main.AbsolutePosition
             local absSize = main.AbsoluteSize
-            local maxHeight = 150
+            local maxHeight = 130
 
             listHolder.Position = UDim2.new(
                 0, absPos.X,
-                0, absPos.Y + absSize.Y + 64
+                0, absPos.Y + absSize.Y + (isMobile and 8 or 64)
             )
 
             listHolder.Size = UDim2.new(
@@ -1265,7 +1289,7 @@ function RuneUI:CreateSlider(parent, title, min, max, default, callback, flag, s
         Font = Enum.Font.Code,
         Text = title,
         TextColor3 = Theme.Text,
-        TextSize = 15,
+        TextSize = isMobile and 13 or 15,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
@@ -1278,7 +1302,7 @@ function RuneUI:CreateSlider(parent, title, min, max, default, callback, flag, s
         Font = Enum.Font.Code,
         Text = tostring(value),
         TextColor3 = Theme.SubText,
-        TextSize = 14,
+        TextSize = isMobile and 13 or 14,
         TextXAlignment = Enum.TextXAlignment.Right,
     })
 
@@ -1351,20 +1375,23 @@ function RuneUI:CreateSlider(parent, title, min, max, default, callback, flag, s
     end
 
     bar.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             setFromX(input.Position.X)
         end
     end)
 
     UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch) then
             setFromX(input.Position.X)
         end
     end)
 
     UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch then
             dragging = false
         end
     end)
@@ -1418,7 +1445,7 @@ function RuneUI:CreateSection(parent, title, icon)
             BackgroundTransparency = 1,
             Size = UDim2.new(0, 16, 0, 16),
             Position = UDim2.new(0, 0, 0, 4),
-            Image = icon,
+            Image = GetIcon(icon),
             ImageColor3 = Theme.Accent,
         })
         self:RegisterThemeObject(iconObj, {ImageColor3 = "Accent"})
@@ -1432,7 +1459,7 @@ function RuneUI:CreateSection(parent, title, icon)
         Font = Enum.Font.Code,
         Text = title,
         TextColor3 = Theme.Text,
-        TextSize = 18,
+        TextSize = isMobile and 13 or 18,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
@@ -1453,7 +1480,7 @@ function RuneUI:CreateSection(parent, title, icon)
     })
     ListLayout(content, 10)
 
-    self:RegisterThemeObject(card, {BackgroundColor3 = "Surface"})
+    self:RegisterThemeObject(cardBg, {BackgroundColor3 = "Surface"})
     self:RegisterThemeObject(cardStroke, {Color = "Border"})
     self:RegisterThemeObject(titleObj, {TextColor3 = "Text"})
     self:RegisterThemeObject(divider, {BackgroundColor3 = "BorderSoft"})
@@ -1496,7 +1523,7 @@ function RuneUI:AddBreak(parent, text)
         Font = Enum.Font.Code,
         Text = text or "",
         TextColor3 = Theme.Accent,
-        TextSize = 14,
+        TextSize = isMobile and 13 or 14,
         TextXAlignment = Enum.TextXAlignment.Center,
     })
 
@@ -1544,7 +1571,7 @@ function RuneUI:CreateInfoLabel(parent, text)
         Font = Enum.Font.Code,
         Text = tostring(text or ""),
         TextColor3 = Theme.Text,
-        TextSize = 15,
+        TextSize = isMobile and 13 or 15,
         TextXAlignment = Enum.TextXAlignment.Left,
     })
 
@@ -1660,7 +1687,7 @@ function RuneUI:CreateTabBox(parent, tabNames, pageData)
             Text = tostring(name),
             Font = Enum.Font.Code,
             TextColor3 = Theme.SubText,
-            TextSize = 14,
+            TextSize = isMobile and 13 or 14,
             AutoButtonColor = false,
             TextTruncate = Enum.TextTruncate.AtEnd,
         })
@@ -1753,7 +1780,7 @@ function RuneUI:CreatePage(name, icon)
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.new(0.5, 0, 0.5, 0),
         Size = UDim2.new(0, 26, 0, 26),
-        Image = icon or Assets.Farm,
+        Image = GetIcon(icon) or Assets.Farm,
     })
     local page = Create("ScrollingFrame", {
         Parent = self.PageHolder,
@@ -1762,7 +1789,7 @@ function RuneUI:CreatePage(name, icon)
         BorderSizePixel = 0,
         CanvasSize = UDim2.new(),
         AutomaticCanvasSize = Enum.AutomaticSize.Y,
-        ScrollBarThickness = 0,
+        ScrollBarThickness = isMobile and 3 or 0,
         Visible = false,
     })
 
@@ -1773,22 +1800,46 @@ function RuneUI:CreatePage(name, icon)
         BackgroundTransparency = 1,
     })
 
-    local left = Create("Frame", {
-        Parent = columns,
-        Size = UDim2.new(0.5, -6, 0, 0),
-        AutomaticSize = Enum.AutomaticSize.Y,
-        BackgroundTransparency = 1,
-    })
-    ListLayout(left, 12)
+    local left, right
 
-    local right = Create("Frame", {
-        Parent = columns,
-        Position = UDim2.new(0.5, 6, 0, 0),
-        Size = UDim2.new(0.5, -6, 0, 0),
-        AutomaticSize = Enum.AutomaticSize.Y,
-        BackgroundTransparency = 1,
-    })
-    ListLayout(right, 12)
+    if isMobile then
+        -- stack vertically on mobile
+        ListLayout(columns, 12)
+
+        left = Create("Frame", {
+            Parent = columns,
+            Size = UDim2.new(1, 0, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            BackgroundTransparency = 1,
+        })
+        ListLayout(left, 12)
+
+        right = Create("Frame", {
+            Parent = columns,
+            Size = UDim2.new(1, 0, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            BackgroundTransparency = 1,
+        })
+        ListLayout(right, 12)
+    else
+        -- side by side on desktop
+        left = Create("Frame", {
+            Parent = columns,
+            Size = UDim2.new(0.5, -6, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            BackgroundTransparency = 1,
+        })
+        ListLayout(left, 12)
+
+        right = Create("Frame", {
+            Parent = columns,
+            Position = UDim2.new(0.5, 6, 0, 0),
+            Size = UDim2.new(0.5, -6, 0, 0),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            BackgroundTransparency = 1,
+        })
+        ListLayout(right, 12)
+    end
 
     local pageData = {
         Name = name,
@@ -1895,7 +1946,7 @@ function RuneUI:ShowSearchResults(matches)
             Text = entry.Name,
             Font = Enum.Font.Code,
             TextColor3 = Theme.Text,
-            TextSize = 14,
+            TextSize = isMobile and 13 or 14,
             AutoButtonColor = false,
             ZIndex = 52,
         })
@@ -2009,7 +2060,7 @@ function BuildWindow()
         Parent = gui,
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.new(0.5, 0, 0.5, 0),
-        Size = UDim2.new(0, 980, 0, 620),
+        Size = UDim2.new(0.5, 0, 0.6, 0),
         BackgroundColor3 = Theme.Background,
         BorderSizePixel = 0,
         ClipsDescendants = true,
@@ -2021,14 +2072,16 @@ function BuildWindow()
     self:RegisterThemeObject(rootStroke, {Color = "Border"})
 
     local mainUi = root
+local windowSize = isMobile and UDim2.new(0.5, 0, 0.5, 0) or UDim2.new(0, 1000, 0, 730)
+root.Size = windowSize
 local uiOpen = true
 local uiBusy = false
 local savedTransparency = {}
 
 local toggleCircle = Create("TextButton", {
     Parent = gui,
-    Size = UDim2.new(0, 60, 0, 60),
-    Position = UDim2.new(0, 16, 0.5, -30),
+    Size = UDim2.new(0, 48, 0, 48),
+    Position = UDim2.new(0, 8, 0.5, -24),
     BackgroundColor3 = Color3.fromRGB(35, 34, 36),
     BorderSizePixel = 0,
     Text = "",
@@ -2043,7 +2096,7 @@ local toggleIcon = Create("ImageLabel", {
     Parent = toggleCircle,
     AnchorPoint = Vector2.new(0.5, 0.5),
     Position = UDim2.new(0.485, 0, 0.55, 0),
-    Size = UDim2.new(0, 50, 0, 50),
+    Size = UDim2.new(0, 38, 0, 38),
     BackgroundTransparency = 1,
     Image = Assets.Logo,
     ImageColor3 = Color3.new(1, 1, 1),
@@ -2258,7 +2311,7 @@ self.ShowUi = showUi
 
     local sidebar = Create("Frame", {
         Parent = root,
-        Size = UDim2.new(0, 72, 1, 0),
+        Size = UDim2.new(0, 58, 1, 0),
         BackgroundColor3 = Theme.Background2,
         BorderSizePixel = 0,
     })
@@ -2270,7 +2323,7 @@ self.ShowUi = showUi
 
     local logoHolder = Create("Frame", {
         Parent = sidebar,
-        Size = UDim2.new(1, 0, 0, 76),
+        Size = UDim2.new(1, 0, 0, 60),
         BackgroundTransparency = 1,
     })
 
@@ -2278,26 +2331,32 @@ self.ShowUi = showUi
         Parent = logoHolder,
         AnchorPoint = Vector2.new(0.5, 0.5),
         Position = UDim2.new(0.5, 0, 0.5, 0),
-        Size = UDim2.new(0, 60, 0, 60),
+        Size = UDim2.new(0, 44, 0, 44),
         BackgroundTransparency = 1,
         Image = Assets.Logo,
     })
 
-    local sidebarList = Create("Frame", {
+    local sidebarListClass = "ScrollingFrame"
+    local sidebarList = Create(sidebarListClass, {
         Parent = sidebar,
-        Position = UDim2.new(0, 10, 0, 78),
-        Size = UDim2.new(1, -20, 1, -88),
+        Position = UDim2.new(0, isMobile and 4 or 6, 0, isMobile and 52 or 78),
+        Size = UDim2.new(1, isMobile and -8 or -12, 1, isMobile and -60 or -88),
         BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        ScrollBarThickness = 3,
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+        ScrollingDirection = Enum.ScrollingDirection.Y,
+        CanvasSize = UDim2.new(0, 0, 0, 0),
+        ClipsDescendants = true,
     })
 
-
-    ListLayout(sidebarList, 10)
+    ListLayout(sidebarList, isMobile and 6 or 10)
     self.SidebarList = sidebarList
 
     local contentWrap = Create("Frame", {
         Parent = root,
-        Position = UDim2.new(0, 72, 0, 0),
-        Size = UDim2.new(1, -72, 1, 0),
+        Position = UDim2.new(0, 58, 0, 0),
+        Size = UDim2.new(1, -58, 1, 0),
         BackgroundTransparency = 1,
     })
 
@@ -2323,7 +2382,7 @@ self.ShowUi = showUi
         PlaceholderText = "Search features",
         Text = "",
         Font = Enum.Font.Code,
-        TextSize = 16,
+        TextSize = isMobile and 13 or 16,
         TextColor3 = Theme.Text,
         PlaceholderColor3 = Theme.Placeholder,
         ClearTextOnFocus = false,
@@ -2338,7 +2397,7 @@ self.ShowUi = showUi
     local searchResultsFrame = Create("Frame", {
         Parent = gui,
         Position = UDim2.new(0, 90, 0, 54),
-        Size = UDim2.new(0, 878, 0, 0),
+        Size = UDim2.new(0, 0, 0, 0),
         AutomaticSize = Enum.AutomaticSize.Y,
         BackgroundColor3 = Theme.Surface,
         BorderSizePixel = 0,
@@ -2378,7 +2437,7 @@ self.ShowUi = showUi
         Position = UDim2.new(0, 18, 0, 62),
         Size = UDim2.new(1, -36, 1, -96),
         BackgroundTransparency = 1,
-        ClipsDescendants = true,
+        ClipsDescendants = not isMobile,
     })
     Round(pageHolder, 12)
     self.PageHolder = pageHolder
@@ -2404,7 +2463,7 @@ self.ShowUi = showUi
         Font = Enum.Font.Code,
         Text = "discord.gg/uJNnCEEbPy | v1.0 | Game: " .. gameName,
         TextColor3 = Theme.SubText,
-        TextSize = 14,
+        TextSize = isMobile and 13 or 14,
         TextXAlignment = Enum.TextXAlignment.Center,
     })
     self:RegisterThemeObject(footerText, {TextColor3 = "SubText"})
@@ -2419,13 +2478,6 @@ self.ShowUi = showUi
     ListLayout(notifHolder, 8)
     self.NotificationHolder = notifHolder
 
-    root.Size = UDim2.new(0, 940, 0, 0)
-    root.BackgroundTransparency = 1
-    TweenService:Create(root, TweenInfo.new(0.2, Enum.EasingStyle.Quad), {
-        Size = UDim2.new(0, 980, 0, 620),
-        BackgroundTransparency = 0,
-    }):Play()
-
     search:GetPropertyChangedSignal("Text"):Connect(function()
         local text = search.Text or ""
         if text == "" then
@@ -2435,7 +2487,7 @@ self.ShowUi = showUi
 
         local absPos = search.AbsolutePosition
         local absSize = search.AbsoluteSize
-        self.SearchResultsFrame.Position = UDim2.fromOffset(absPos.X, absPos.Y + absSize.Y + 70)
+        self.SearchResultsFrame.Position = UDim2.fromOffset(absPos.X, absPos.Y + absSize.Y + 4)
         self.SearchResultsFrame.Size = UDim2.new(0, absSize.X, 0, 0)
         self:RunSearch(text)
     end)
